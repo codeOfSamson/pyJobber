@@ -1,1 +1,9 @@
 .worktrees/
+.env
+config.json
+resume.pdf
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/

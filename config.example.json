@@ -1,0 +1,13 @@
+{
+  "search_terms": [
+    "software engineer",
+    "backend developer",
+    "python developer",
+    "full stack engineer"
+  ],
+  "pages_per_site": 3,
+  "sites": ["cakeresume", "104"],
+  "remote_only": true,
+  "ai_screening": true,
+  "report_email": "your@email.com"
+}
