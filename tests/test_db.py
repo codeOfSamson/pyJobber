@@ -37,3 +37,23 @@ def test_run_log_fields(session):
     assert saved.term_index == 1
     assert saved.total_applied == 10
     assert saved.completed_at is None
+
+
+from db.client import get_engine, get_session, init_db
+
+
+def test_get_engine_creates_tables():
+    eng = get_engine("sqlite:///:memory:")
+    init_db(eng)
+    from sqlalchemy import inspect
+    inspector = inspect(eng)
+    assert "job_applications" in inspector.get_table_names()
+    assert "run_log" in inspector.get_table_names()
+
+
+def test_get_session_returns_usable_session():
+    eng = get_engine("sqlite:///:memory:")
+    init_db(eng)
+    sess = get_session(eng)
+    assert sess is not None
+    sess.close()
