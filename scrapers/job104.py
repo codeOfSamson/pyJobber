@@ -4,7 +4,7 @@ from browser.browser import human_delay
 from scrapers.base import BaseScraper, ApplyResult
 from ai.screening import answer_screening_questions
 
-LOGIN_URL = "https://www.104.com.tw/user/login"
+LOGIN_URL = "https://signin.104.com.tw/"
 SEARCH_URL = "https://www.104.com.tw/jobs/search/?keyword={term}&remoteWork=1&page={page}"
 SEARCH_URL_NO_REMOTE = "https://www.104.com.tw/jobs/search/?keyword={term}&page={page}"
 
@@ -17,11 +17,17 @@ class Job104Scraper(BaseScraper):
         self._claude_api_key = claude_api_key
 
     def login(self, page: Page) -> None:
-        page.goto(LOGIN_URL)
-        page.wait_for_selector('[name="id"]', timeout=10000)
-        page.fill('[name="id"]', self._email)
-        page.fill('[name="passwd"]', self._password)
-        page.click('button[type="submit"]')
+        page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=20000)
+        page.wait_for_selector('[name="identity"]', timeout=15000)
+        page.fill('[name="identity"]', self._email)
+        submit = page.query_selector('button[type="submit"], button:has-text("下一步"), button:has-text("Next")')
+        if submit:
+            submit.click()
+        page.wait_for_timeout(1500)
+        password_field = page.query_selector('[name="password"], input[type="password"]')
+        if password_field:
+            password_field.fill(self._password)
+            page.click('button[type="submit"]')
         page.wait_for_load_state("networkidle")
         human_delay(2.0, 4.0)
 

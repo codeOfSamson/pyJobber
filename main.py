@@ -79,12 +79,17 @@ def main() -> None:
                 links = scraper.collect_links(
                     page, search_term, config["pages_per_site"], config["remote_only"]
                 )
+                max_links = config.get("max_links_per_site")
+                if max_links:
+                    links = links[:max_links]
                 for url in links:
                     if session.query(JobApplication).filter_by(url=url).first():
                         total_skipped += 1
                         continue
 
+                    print(f"  [{site_name}] applying: {url}")
                     result = scraper.apply(page, url, resume_path, resume_text)
+                    print(f"  [{site_name}] result: {result.status}" + (f" — {result.error[:80]}" if result.error else ""))
                     session.add(JobApplication(
                         url=url,
                         site=site_name,

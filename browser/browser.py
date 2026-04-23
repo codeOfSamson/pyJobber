@@ -10,7 +10,7 @@ USER_AGENTS = [
 
 
 def create_browser(playwright) -> Browser:
-    return playwright.chromium.launch(headless=True)
+    return playwright.chromium.launch(headless=False)
 
 
 def create_page(browser: Browser) -> Page:
