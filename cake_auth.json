@@ -1,0 +1,595 @@
+{
+  "cookies": [
+    {
+      "name": "_GRECAPTCHA",
+      "value": "09AKhCRwgdRoXZeTGGodCDL0p_QI0jjR1j2Pxf6FyR2ZqpMq-qc8Fkv_E7sOcK0opXc5Ft8lT8UVGU5h6ebATqo7E",
+      "domain": "www.google.com",
+      "path": "/recaptcha",
+      "expires": 1792566565.441954,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "locale",
+      "value": "en",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550904.780287,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cake_user_country",
+      "value": "TW",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550530.395625,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cake_user_city",
+      "value": "Yilan",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550530.395704,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "geoip2_request_origin_country",
+      "value": "TW",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550530.395761,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ALGOLIA",
+      "value": "anonymous-0889489f-dfa1-40e6-825b-5506ec7548db",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1792566532,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "algolia-visitor-id",
+      "value": "algolia-visitor-ca80095de8594",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550532,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "g_state",
+      "value": "{\"i_l\":0,\"i_ll\":1777014532729,\"i_b\":\"HONYrhm52BDubf6+At06EZSE1RDZtP9RrZintGcJD7g\",\"i_e\":{\"enable_itp_optimization\":20},\"i_et\":1777014532719}",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1792566532,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.249601596.1777014533",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1811574904.544495,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "CLID",
+      "value": "f8c0c78e03c64ae6866765da406d62ed.20260424.20270424",
+      "domain": "www.clarity.ms",
+      "path": "/",
+      "expires": 1808550533.144642,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "li_sugr",
+      "value": "86863428-96d0-48ec-bcf4-ffd6b739450c",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1784790904.863399,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "bcookie",
+      "value": "\"v=2&b7a2013f-a2fe-4de1-8c74-6ed13335d0ee\"",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1808550904.863446,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "lidc",
+      "value": "\"b=TGST09:s=T:r=T:a=T:p=T:g=3241:u=1:x=1:i=1777014533:t=1777100933:v=2:sig=AQFVk5FIanFF5chkOuOEy638D0zh_gSh\"",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1777100934.326218,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_clck",
+      "value": "x7d2jv%5E2%5Eg5h%5E0%5E2305",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1808550533,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "UserMatchHistory",
+      "value": "AQKKKbClmozRHAAAAZ2-Ue0vS1AXxMG4qC5gRwBm2fhRjp8DunO_k-6EdlcRMC1E-kHT2x_Is4nkGw",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1779606533.606607,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "AnalyticsSyncHistory",
+      "value": "AQI9t0pg5PCX7wAAAZ2-Ue0vBv-BtBpwlLEru2r7LnIql0KsF42k9qZa2YgPP3eaZ5mFeFQvoh6kYfbFCjQRog",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1779606533.606623,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MUID",
+      "value": "0867CE78AC1169353157D93DADA568BE",
+      "domain": ".bing.com",
+      "path": "/",
+      "expires": 1810710534.710772,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MR",
+      "value": "0",
+      "domain": ".c.bing.com",
+      "path": "/",
+      "expires": 1777619334.710833,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SRM_B",
+      "value": "0867CE78AC1169353157D93DADA568BE",
+      "domain": ".c.bing.com",
+      "path": "/",
+      "expires": 1810710534.710857,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SM",
+      "value": "C",
+      "domain": ".c.clarity.ms",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MUID",
+      "value": "0867CE78AC1169353157D93DADA568BE",
+      "domain": ".clarity.ms",
+      "path": "/",
+      "expires": 1810710533.768679,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MR",
+      "value": "0",
+      "domain": ".c.clarity.ms",
+      "path": "/",
+      "expires": 1777619333.768742,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "bscookie",
+      "value": "\"v=1&20260424070853f102dd00-0d7d-48ec-8164-cce62c3582bfAQH7xFO7FDkG_UEZwi6LFgelvYe7NmB1\"",
+      "domain": ".www.linkedin.com",
+      "path": "/",
+      "expires": 1808550533.863217,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "intercom-id-cvyf2o3h",
+      "value": "a320527b-1e44-4766-8e8c-22716915f66e",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1800344533,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "intercom-device-id-cvyf2o3h",
+      "value": "c0aa8c0a-8165-4d54-b147-bb35aaaf3979",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1800344907,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "IDE",
+      "value": "AHWqTUlyhEx7u5tKue8dDPLBuCkXxlwAE50DDfWb5n8lSwmIq7KNGJav1uiBBCNB",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1811574545.834404,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_gcl_au",
+      "value": "1.1.154965597.1777014533.899942186.1777014546.1777014565",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1784790533,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_fbp",
+      "value": "fb.1.1777014565477.274721689735607982",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1784790918,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "request_method",
+      "value": "POST",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "test_group",
+      "value": "0",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1779606567,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "previous_origin",
+      "value": "https://www.cake.me",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1777101304,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "previous_path_set_by",
+      "value": "cakeresume_next",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1777101304,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "c%3Aflash%3AlastUsedJwtHash",
+      "value": "1e638baee2153a71d867de96efca676e08a0fa64dd24a35bc7ccb1ee4d0ca2d8",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550567,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ab.storage.deviceId.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+      "value": "g%3A77215268-02e2-df3b-f813-d11be3b6ac32%7Ce%3Aundefined%7Cc%3A1777014532655%7Cl%3A1777014567309",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1811574904,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ab.storage.userId.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+      "value": "g%3A6640309%7Ce%3Aundefined%7Cc%3A1777014567308%7Cl%3A1777014567310",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1811574904,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cakeresume_spa_messages_submit_setting",
+      "value": "false",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1808550883,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "previous_path",
+      "value": "/apply-for-job/senior-software-engineer-team-lead",
+      "domain": "www.cake.me",
+      "path": "/",
+      "expires": 1777101304,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_STAR_cakeresume_json_web_token",
+      "value": "eyJhbGciOiJIUzI1NiJ9.eyJqd3RfY3JlYXRlZF9hdCI6IjIwMjYtMDQtMjQgMDc6MTU6MDQgKzAwMDAiLCJfY3NyZl90b2tlbiI6bnVsbCwiZmxhc2giOnt9LCJ1c2VyX2lkIjo2NjQwMzA5LCJleHAiOjE3NzcxMDEzMDQsIm5iZiI6MTc3NzAxMTMwNCwiaXNzIjoid3d3LmNha2UubWUiLCJpYXQiOjE3NzcwMTQ5MDR9.d1AfziVL1-cqFDC3aVaCvuDAvffUND84aWEDEpdlm4s",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_STAR_cakeresume_session",
+      "value": "LNoWX7kP6ghnEH%2BMDRVf6mNym%2BqZgqZruM%2BPay9tz3zyLcCuqtpBJTaWzEjtrahmgEkdZCThxJFxpQUFVwVWywFddtW7sxKo4920IX2bPezs9Z%2B5Xg8fArpLFBkgKQDzK1OTV75o4G1IdabL0shIWGZfKnDaHX7zNGv%2BnfEHL5PN4w4Erjd%2F%2BzdcAOgmKHnxFX7mEtyLLkiF4XOQ8Xjz5rvt1QM9oI89yt%2FQVxnj6%2FuS8Dtka7YUKjGGWUJf%2FMRLisvfH0wgE%2FX8eRcshSlOr7YvG%2Bx0D73VwZWNETVTWI8hx%2F6Ul%2FQ83mYmZt3zYyoUr4F8YDwrRVHBNpbJbYtwF8%2BXZlIbRsamo7O7wqqmptdcV6YuqYbG4rZkP9LPIWq7tU6%2BXRWgZEJuRU86QWMf0%2FJ7qHPN9R2gQeaz8dE4fltTwCRTMMUP95%2BKMuxBFvG6ouytiEQFlrV4LjNrSIGpDq7bTTGvWfk0n8trjZjwopH8jF0iAuFLHC5ILhOCG0GEqvZ39SsMihzu2TJzfFJ3vnikzY6bPiS7nmiOJxU5Be6ZUyftD2rh1T%2BbhKS%2BDswWrSHlFMcBS65d3wfnBp2wz1KMu6ZZgDGvXK2R45NOMMN%2BOjGM%2FPfpeOdjVYtRDg92fijKDXfWiTHsOc85qjNQJFgeYcHKg6EBR10P1E%2BomU6px941UM5%2BXgwkBEsbS%2F92r11JLQ%3D%3D--AScLkMACAlBbOmfi--o1RUtUQUd0vevg6T67a%2Bpg%3D%3D",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_clsk",
+      "value": "ey3bo5%5E1777014904960%5E13%5E1%5Ed.clarity.ms%2Fcollect",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1777101304,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "intercom-session-cvyf2o3h",
+      "value": "WmlCaTNTNVFTN3F1UEdGSUVKMWVteTdKSzE2Y2FlV3I5MDdiMU1xeVI4NlFGU290Tm1odU5mWm1PZFAyTDN4T25WOXpRenFaZURTU09SbVNvditZYkdqRTVLcHV6SDZXYlFNQnpWUjVFSEpuNjFNd3VmQ1dkNGcyKzNXbys2SXE2a0gxOHp1TDgvWno1MVN1QnhrNno5Q3VoRDV1TXhUTVRFTHR5U2UrRjNXd0pzR1Qzb0NVMTQ0aENKOC90d24vTkJNYTB3MUZSTDBtUVJldTJhZEhLUT09LS1RMGQ2N2E3TURwMmhZazdPTUxHQ29nPT0=--256f4d07d674b7423d072fd490444b5847148fcb",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1808464507,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_J44C073CXD",
+      "value": "GS2.1.s1777014532$o1$g1$t1777014918$j24$l0$h0",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1811574918.543429,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga_9GFTRX238W",
+      "value": "GS2.1.s1777014533$o1$g1$t1777014918$j24$l0$h964683073",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1811574918.545779,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ab.storage.sessionId.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+      "value": "g%3Ad4b30d05-a709-bf56-53d2-ba405ce1a950%7Ce%3A1777016718547%7Cc%3A1777014567309%7Cl%3A1777014918547",
+      "domain": ".cake.me",
+      "path": "/",
+      "expires": 1811574918,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.cake.me",
+      "localStorage": [
+        {
+          "name": "ab.storage.lastReqToEndpoint.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":{\"d\":1777014924107,\"cc\":1777014883081}}"
+        },
+        {
+          "name": "_gcl_ls",
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gcl_ctr\":{\"value\":{\"value\":0,\"timeouts\":0,\"errors\":0,\"eopCount\":0,\"creationTimeMs\":1777014532772},\"expires\":1784790532772}}"
+        },
+        {
+          "name": "__mpq_9cd3a919409eb3bd2aa39f8c634df985_pp",
+          "value": "[]"
+        },
+        {
+          "name": "ab.storage.messagingSessionStart.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":1777014532654}"
+        },
+        {
+          "name": "ab.storage.triggers.ts.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":1777014568347}"
+        },
+        {
+          "name": "mp_9cd3a919409eb3bd2aa39f8c634df985_mixpanel",
+          "value": "{\"distinct_id\": \"6640309\",\"$device_id\": \"19dbe51e9fbe10-0c0c45857f1788-1a525637-e1000-19dbe51e9fce10\",\"$initial_referrer\": \"$direct\",\"$initial_referring_domain\": \"$direct\",\"__mps\": {},\"__mpso\": {},\"__mpus\": {},\"__mpa\": {},\"__mpu\": {},\"__mpr\": [],\"__mpap\": [],\"$user_id\": \"6640309\",\"plan_path\": \"basic\"}"
+        },
+        {
+          "name": "ab.storage.ccLastFullSync.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":0}"
+        },
+        {
+          "name": "ab.storage.userId.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":\"g:6640309|e:undefined|c:1777014567308|l:1777014567310\"}"
+        },
+        {
+          "name": "pusherTransportTLS",
+          "value": "{\"timestamp\":1777014904430,\"transport\":\"ws\",\"latency\":216}"
+        },
+        {
+          "name": "l:jobSearch:prevSearchState",
+          "value": "{\"query\":\"software engineer\",\"page\":1,\"filters\":{\"professions\":[\"it\"]}}"
+        },
+        {
+          "name": "ab.storage.brazeSyncRetryCount.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":0}"
+        },
+        {
+          "name": "ab.storage.requestAttempts.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":{\"d\":1,\"cc\":1}}"
+        },
+        {
+          "name": "ab.storage.deviceId.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":\"g:77215268-02e2-df3b-f813-d11be3b6ac32|e:undefined|c:1777014532655|l:1777014567309\"}"
+        },
+        {
+          "name": "gsc",
+          "value": "{\"uid\":\"676f947d84060016\",\"sessionsCount\":1,\"ab\":{\"89831-342691460\":548985,\"89830-342691437\":548984}}"
+        },
+        {
+          "name": "ab.storage.ccLastCardUpdated.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":0}"
+        },
+        {
+          "name": "intercom.intercom-state-cvyf2o3h",
+          "value": "{\"app\":{\"openConfig\":{\"unifiedStyling\":true,\"openTo\":\"home\",\"spaces\":[{\"type\":\"home\",\"label\":\"Home\",\"navigationLabel\":\"Home\",\"badge\":null},{\"type\":\"messages\",\"label\":\"Messages\",\"navigationLabel\":\"Messages\",\"badge\":null},{\"type\":\"help\",\"label\":\"Help\",\"navigationLabel\":\"Help\",\"badge\":null},{\"type\":\"tasks\",\"label\":\"Tasks\",\"navigationLabel\":\"Tasks\",\"badge\":null},{\"type\":\"news\",\"label\":\"News\",\"navigationLabel\":\"News\",\"badge\":{\"badgeType\":\"passive\"}}],\"userHasReceivedChecklists\":false,\"userHasLiveNewsfeed\":true,\"userHasTickets\":false},\"selfServeSuggestionsMatch\":false,\"name\":\"Cake\",\"features\":{\"anonymousInboundMessages\":true,\"googleAnalytics\":false,\"hubspotInstalled\":false,\"inboundMessages\":true,\"marketoEnrichmentInstalled\":false,\"googleAnalytics4Integration\":true},\"helpCenterSiteUrl\":\"https://help.cake.me\",\"inboundConversationsDisabled\":true,\"isDeveloperWorkspace\":false,\"customGoogleAnalyticsTrackerId\":null},\"launcher\":{\"isLauncherEnabled\":true},\"launcherDiscoveryMode\":{\"hasDiscoveredLauncher\":true},\"launcherSettings\":{\"alignment\":\"right\",\"color\":\"#13AB67\",\"colorDark\":\"#13AB67\",\"hasRequiredFeatures\":true,\"horizontalPadding\":20,\"instantBootEnabled\":true,\"launcherLogoUrl\":\"https://downloads.intercomcdn.com/i/o/cvyf2o3h/849427/f69507960b9c2f60896f3f6c130e/05f7bbabf7f2350b0e7006106b9176f1.png\",\"launcherLogoDarkUrl\":null,\"messengerLayout\":\"widget\",\"secondaryColor\":\"#13ab67\",\"secondaryColorDark\":\"#0071b2\",\"showLauncher\":true,\"themeMode\":\"light\",\"updatedAt\":1776986341,\"verticalPadding\":20,\"isLoading\":false},\"user\":{\"id\":\"685c9c736784b029b30e45d9\",\"role\":\"user\",\"locale\":\"en\",\"hasConversations\":false},\"message\":{},\"conversations\":{\"byId\":{}},\"openOnBoot\":{\"type\":null,\"metadata\":{},\"lastOpenAtTimestamp\":1777015351787},\"operator\":{\"lastComposerEvent\":0},\"router\":{\"isInitialized\":true,\"navigationQueue\":[],\"action\":\"POP\",\"location\":{\"pathname\":\"/home\",\"search\":\"\",\"hash\":\"\",\"state\":null,\"key\":\"default\"}}}"
+        },
+        {
+          "name": "__mpq_9cd3a919409eb3bd2aa39f8c634df985_ev",
+          "value": "[]"
+        },
+        {
+          "name": "intercom.lastTooltipsReceivedAt",
+          "value": "1777014904796"
+        },
+        {
+          "name": "ab.storage.globalRateLimitCurrentTokenCount.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":10}"
+        },
+        {
+          "name": "ab.storage.ccRateLimitCurrentTokenCount.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":0}"
+        },
+        {
+          "name": "ab.storage.sessionId.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":\"g:d4b30d05-a709-bf56-53d2-ba405ce1a950|e:1777016718547|c:1777014567309|l:1777014918547\"}"
+        },
+        {
+          "name": "ab.storage.ccLastClientRequest.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":1777014883081}"
+        },
+        {
+          "name": "s:es:job",
+          "value": "[{\"key\":\"senior-software-engineer-team-lead\",\"value\":\"Job Search Page\",\"time\":1777014881335},{\"key\":\"back-end-engineer-7e7256\",\"value\":\"Job Search Page\",\"time\":1777014849138},{\"key\":\"software-engineer-f3c235\",\"value\":\"Job Search Page\",\"time\":1777014734330},{\"key\":\"backend-software-engineer-6c3414\",\"value\":\"Job Search Page\",\"time\":1777014673607}]"
+        },
+        {
+          "name": "ab.storage.sdkVersion.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":\"5.2.0\"}"
+        },
+        {
+          "name": "ab.storage.session_id_for_cached_metadata.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":\"d4b30d05-a709-bf56-53d2-ba405ce1a950\"}"
+        },
+        {
+          "name": "ab.storage.cc.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":[]}"
+        },
+        {
+          "name": "ab.storage.triggers.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":[{\"i\":\"698c50b9c5e28f00653b5418\",\"c\":[{\"t\":\"custom_event\",\"d\":\"View message channel\"}],\"s\":\"2026-03-13T08:30:00.000Z\",\"e\":\"2026-05-13T15:55:00.000Z\",\"p\":2000086000,\"t\":\"templated_iam\",\"da\":{\"trigger_id\":\"Njk4YzUwYjljNWUyOGYwMDY1M2I1NDE4XyRfbXY9Njk4YzUwYjhjNWUyOGYwMDY1M2I1NDE3JnBpPWNtcA==\"},\"d\":0,\"r\":2419200,\"tm\":30000,\"ld\":null},{\"i\":\"68d4f42394e3db006430d77d\",\"c\":[{\"t\":\"custom_event_property\",\"d\":{\"e\":\"Page view\",\"pf\":[[{\"k\":\"url\",\"t\":\"string\",\"c\":10,\"v\":\"^https?:\\\\/\\\\/(?:www\\\\.)?cake\\\\.me\\\\/ai-resume-checker(?!\\\\/)(?:\\\\?[^\\\\s#]*)?$\"},{\"k\":\"url\",\"t\":\"string\",\"c\":1,\"v\":\"https://www.cake.me/ai-resume-checker\"}]]}}],\"s\":\"2025-09-25T07:45:00.000Z\",\"e\":null,\"p\":2000091000,\"t\":\"inapp\",\"da\":{\"bg_color\":4294243575,\"click_action\":\"URI\",\"close_btn_color\":4291085508,\"frame_color\":3207803699,\"image_alt\":\"\",\"image_style\":\"GRAPHIC\",\"image_url\":\"https://braze-images.com/appboy/communication/marketing/slide_up/slide_up_message_parameters/images/68d4f6baf7ffa200670b3a85/f8c43911dc786b5572f334be4f4a7443a2ad34e8/original.png?1758865689\",\"language\":\"\",\"message\":\"\",\"message_close\":\"SWIPE\",\"open_target\":\"NONE\",\"trigger_id\":\"NjhkNGY0MjM5NGUzZGIwMDY0MzBkNzdkXyRfbXY9NjhkNGY2YmFmN2ZmYTIwMDY3MGIzYTg0JnBpPWNtcA==\",\"type\":\"MODAL\",\"uri\":\"https://www.cake.me/ai-resume-checker/upload?utm_campaign=product_promo_2025_aic&utm_source=braze&utm_medium=popup&utm_content=braze_aic_promo_landingtoentrnce\",\"use_webview\":null},\"d\":12,\"r\":-1,\"tm\":42000,\"ld\":null}]}"
+        },
+        {
+          "name": "li_adsId",
+          "value": "03d47d84-3817-46c8-9f9a-7a9ce6ca85a8"
+        },
+        {
+          "name": "ab.storage.sdk_metadata.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":[\"npm\"]}"
+        },
+        {
+          "name": "ab.storage.device.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":{\"browser\":\"Unknown Browser\",\"browser_version\":\"Unknown Version\",\"os_version\":\"Mac\",\"locale\":\"en-us\",\"time_zone\":\"Asia/Taipei\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36\"}}"
+        },
+        {
+          "name": "lastExternalReferrer",
+          "value": "empty"
+        },
+        {
+          "name": "ab.storage.lastSdkReq.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":1777014924107}"
+        },
+        {
+          "name": "lastExternalReferrerTime",
+          "value": "1777014904590"
+        },
+        {
+          "name": "ab.storage.serverConfig.56ebdd88-ae53-4da5-a848-45f33b9c96b4",
+          "value": "{\"v\":{\"s\":\"5.2.0\",\"l\":1770937790,\"e\":[\"submit AIC Survey 1\"],\"a\":[\"phone_number\"],\"p\":[],\"m\":21600,\"v\":\"BH7_3YNH1JjOj4aW3rHnw0PzAlWRZo1svSi3nPK8hnVL0kYTfG-hyly00LbnUAasMj-bjuxM1JONjnC9Pyiczcw=\",\"c\":{\"enabled\":true,\"rate_limit\":{\"capacity\":5,\"enabled\":true,\"refill_rate\":180}},\"f\":{\"enabled\":false},\"grl\":{\"capacity\":30,\"enabled\":true,\"endpoint_overrides\":{\"banners/sync\":{\"capacity\":5,\"refill_rate\":180},\"content_cards/sync\":{\"capacity\":5,\"refill_rate\":10},\"push/redeliver\":{\"capacity\":1,\"refill_rate\":180}},\"refill_rate\":30}}}"
+        },
+        {
+          "name": "gscs",
+          "value": "{\"id\":\"676f947d83fbcde4\",\"$start\":1777014535173,\"source\":\"\",\"landing\":\"https://www.cake.me/users/sign-in\",\"pageNum\":14,\"lastVisit\":1777014904824,\"server\":{\"id\":\"676f947d83fbcde4\",\"user_id\":\"676f947d84060016\",\"time\":1777014535695,\"token\":\"1777014535.414b5421e54f232788537ac258b31b3d.3116c2498a3ae58a72153798e76cde62\",\"geo\":{\"ip\":\"1.169.43.146\",\"geopath\":\"146858:164957:\",\"geoname_id\":1665148,\"longitude\":121.5324,\"latitude\":25.0504,\"city\":\"New Taipei\",\"region\":\"New Taipei\",\"country\":\"Taiwan\",\"country_code\":\"TW\",\"timezone\":\"Asia/Taipei\"},\"ua\":{\"platform\":\"Desktop\",\"os\":\"Mac OS\",\"os_family\":\"Mac OS X\",\"os_version\":\"10.15.7\",\"browser\":\"Chrome\",\"browser_family\":\"Chrome\",\"browser_version\":\"125.0.0\",\"device\":\"Other\"},\"utm\":{},\"timedelta\":-104}}"
+        },
+        {
+          "name": "_grecaptcha",
+          "value": "09AKhCRwjLth_vY0Ocj5tK7lMIWUyxb8vksMI1yUugXejQe7uzAyi7ryriJz3zAqe85SZo8eb61jWRGBn3KhAQpo0sYVbiH2oUy7nenzcQ42aC2Nuu1IXhqzpoa8bMmlfG"
+        }
+      ]
+    }
+  ]
+}
