@@ -49,6 +49,12 @@ def build_subject(run_date: str, sites: list[str], search_term: str) -> str:
     return f'AutoJobber Daily Report — {run_date} | {sites_str} | "{search_term}"'
 
 
+def send_alert(url: str, from_email: str, to_email: str, password: str) -> None:
+    body = f"AutoJobber hit screening questions and needs manual review:\n\n{url}"
+    subject = "AutoJobber — Screening Questions Need Review"
+    send_report(body=body, subject=subject, from_email=from_email, to_email=to_email, password=password)
+
+
 def send_report(body: str, subject: str, from_email: str, to_email: str, password: str) -> None:
     msg = MIMEText(body, "plain", "utf-8")
     msg["Subject"] = subject

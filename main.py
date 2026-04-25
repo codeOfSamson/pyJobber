@@ -11,7 +11,7 @@ from db.models import JobApplication, RunLog
 from browser.browser import create_browser, create_page
 from scrapers.cakeresume import CakeResumeScraper
 from scrapers.job104 import Job104Scraper
-from mailer.reporter import build_report, build_subject, send_report
+from mailer.reporter import build_report, build_subject, send_report, send_alert
 
 SCRAPER_MAP = {
     "cakeresume": CakeResumeScraper,
@@ -110,7 +110,15 @@ def main() -> None:
                     else:
                         total_skipped += 1
 
-                    screening_urls.extend(result.screening_links)
+                    if result.screening_links:
+                        screening_urls.extend(result.screening_links)
+                        for screening_url in result.screening_links:
+                            send_alert(
+                                url=screening_url,
+                                from_email=secrets["report_email"],
+                                to_email=config["report_email"],
+                                password=secrets["email_password"],
+                            )
             finally:
                 browser.close()
 

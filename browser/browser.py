@@ -1,3 +1,4 @@
+import os
 import random
 import time
 from playwright.sync_api import Browser, BrowserContext, Page
@@ -10,7 +11,9 @@ USER_AGENTS = [
 
 
 def create_browser(playwright) -> Browser:
-    return playwright.chromium.launch(headless=False)
+    production = os.environ.get("ENV") == "production"
+    args = ["--no-sandbox", "--disable-dev-shm-usage"] if production else []
+    return playwright.chromium.launch(headless=production, args=args)
 
 
 def create_page(browser: Browser) -> Page:
