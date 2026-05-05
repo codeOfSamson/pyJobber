@@ -14,6 +14,7 @@ def build_report(
     total_applied: int,
     total_failed: int,
     total_skipped: int,
+    total_dupes: int,
     failed_urls: list[tuple[str, str]],
     screening_urls: list[str],
 ) -> str:
@@ -32,6 +33,7 @@ def build_report(
         f"Applied:       {total_applied}",
         f"Failed:        {total_failed}",
         f"Skipped:       {total_skipped}",
+        f"Dupes:         {total_dupes}",
     ]
     if failed_urls:
         lines += ["", "Failed Applications", "─" * 35]

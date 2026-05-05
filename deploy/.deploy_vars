@@ -1,0 +1,5 @@
+RDS_SG_ID=sg-0bc0ed4f6f594cd85
+DB_HOST=autojobber.cg58mmkeijsq.us-east-1.rds.amazonaws.com
+ECS_SG_ID=sg-06b211a33ef83c4a2
+SUBNET_ID=subnet-0f4c5319dc4e18172
+CLUSTER_NAME=autojobber
