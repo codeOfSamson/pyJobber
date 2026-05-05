@@ -2,6 +2,10 @@
 .env
 config.json
 resume.pdf
+auth.json
+auth_104.json
+cake_auth.json
+deploy/.deploy_vars
 __pycache__/
 *.pyc
 .pytest_cache/
