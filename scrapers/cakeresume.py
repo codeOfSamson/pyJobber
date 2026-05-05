@@ -1,3 +1,4 @@
+import re
 from playwright.sync_api import Page
 from browser.browser import human_delay
 from scrapers.base import BaseScraper, ApplyResult
@@ -21,8 +22,9 @@ class CakeResumeScraper(BaseScraper):
         page.fill('[name="email"]', self._email)
         page.fill('[name="password"]', self._password)
         page.click('[type="submit"]')
-        page.wait_for_load_state("networkidle")
+        page.wait_for_load_state("domcontentloaded")
         human_delay(1.5, 3.0)
+        print(f"[cake] login complete — url={page.url!r}")
 
     def collect_links(self, page: Page, search_term: str, pages: int, remote_only: bool) -> list:
         links: list = []
@@ -30,7 +32,7 @@ class CakeResumeScraper(BaseScraper):
         for p in range(1, pages + 1):
             url = url_template.format(term=search_term.replace(" ", "+"), page=p)
             page.goto(url)
-            page.wait_for_load_state("networkidle")
+            page.wait_for_load_state("domcontentloaded")
             human_delay(1.0, 2.5)
             anchors = page.query_selector_all('a[href*="/companies/"][href*="/jobs/"]')
             for a in anchors:
@@ -42,38 +44,57 @@ class CakeResumeScraper(BaseScraper):
                     full = f"https://www.cakeresume.com{full}"
                 if full not in links:
                     links.append(full)
+        print(f"[cake] collected {len(links)} links for {search_term!r}")
         return links
 
     def apply(self, page: Page, url: str, resume_path: str, resume_text: str) -> ApplyResult:
         try:
             page.goto(url)
-            page.wait_for_load_state("networkidle")
-            human_delay(3.0, 4.0)
+            page.wait_for_load_state("domcontentloaded")
+            human_delay(1.0, 2.0)
+            print(f"[cake] job page — url={page.url!r} title={page.title()!r}")
 
-            # Step 1: Derive apply URL from job slug — avoids button-finding entirely
-            # e.g. https://www.cake.me/companies/acme/jobs/senior-dev -> /apply-for-job/senior-dev
-            slug = url.rstrip("/").split("/jobs/")[-1]
-            apply_url = f"https://www.cake.me/apply-for-job/{slug}"
+            if page.get_by_text("ineligible to apply for the same job", exact=False).count():
+                return ApplyResult(status="skipped", error="recently applied — ineligible for 1 day")
+
+            # Step 1: Find apply button, get its href — works for both Apply Now and Reapply
+            try:
+                apply_loc = page.get_by_role("link", name=re.compile(r"apply now|reapply", re.I)).first
+                apply_loc.wait_for(state="attached", timeout=15000)
+            except Exception:
+                apply_links = page.evaluate("""() =>
+                    Array.from(document.querySelectorAll('a[href]'))
+                        .map(a => ({text: a.innerText.trim().slice(0,40), href: a.getAttribute('href')}))
+                        .filter(a => /apply/i.test(a.href) || /apply/i.test(a.text))
+                        .slice(0, 5)
+                """)
+                print(f"[cake] no apply btn — url={page.url!r} title={page.title()!r}")
+                print(f"[cake] apply-related links: {apply_links}")
+                return ApplyResult(status="skipped", error="apply button not found")
+
+            href = apply_loc.get_attribute("href") or ""
+            if not href:
+                return ApplyResult(status="skipped", error="apply button has no href")
+
+            apply_url = f"https://www.cake.me{href}" if href.startswith("/") else href
 
             ap = page.context.new_page()
             ap.goto(apply_url)
-            ap.wait_for_load_state("networkidle")
+            ap.wait_for_load_state("domcontentloaded")
             human_delay(1.5, 2.5)
 
-            # If redirected to an external ATS, skip
+            # If redirected to external ATS, skip
             if "cake.me" not in ap.url and "cakeresume.com" not in ap.url:
                 ap.close()
                 return ApplyResult(status="skipped", error=f"external ATS: {ap.url}")
 
             # Step 2: Personal info page — just click Next (info is cached)
-            next_btn = ap.wait_for_selector('button:has-text("Next")', timeout=10000)
-            next_btn.click()
-            ap.wait_for_load_state("networkidle")
+            ap.get_by_role("button", name="Next").first.click()
+            ap.wait_for_load_state("domcontentloaded")
             human_delay(1.0, 2.0)
 
             # Step 3: Resume template page — click Select Template, pick topmost radio, confirm
-            template_btn = ap.wait_for_selector('button:has-text("Select Template")', timeout=10000)
-            template_btn.click()
+            ap.get_by_role("button", name="Select Template").click()
             human_delay(0.5, 1.0)
 
             # Custom radio divs (no <input type="radio">) — wait for modal to render
@@ -81,29 +102,30 @@ class CakeResumeScraper(BaseScraper):
             first_radio.click()
             human_delay(0.3, 0.6)
 
-            confirm_btn = ap.wait_for_selector('button:has-text("Confirm")', timeout=5000)
-            confirm_btn.click()
+            ap.get_by_role("button", name="Confirm").click()
             human_delay(0.5, 1.0)
 
             # Step 4: Click Next — may land on Submit or Screening Questions
-            next_btn2 = ap.wait_for_selector('button:has-text("Next")', timeout=10000)
-            next_btn2.click()
-            ap.wait_for_load_state("networkidle")
+            ap.get_by_role("button", name="Next").first.click()
+            ap.wait_for_load_state("domcontentloaded")
             human_delay(1.0, 2.0)
 
-            submit_btn = ap.query_selector('button:has-text("Submit Application")')
-            if not submit_btn:
+            submit_loc = ap.get_by_role("button", name="Submit Application")
+            if not submit_loc.count():
                 # Screening questions or unknown step — flag for manual review
+                ap.close()
                 return ApplyResult(status="skipped", screening_links=[url])
 
-            submit_btn.click()
-            ap.wait_for_load_state("networkidle")
+            submit_loc.click()
+            ap.wait_for_load_state("domcontentloaded")
             human_delay(1.0, 2.0)
-
-            if not ap.query_selector('*:has-text("Successfully Applied")'):
-                return ApplyResult(status="skipped", screening_links=[url])
+            ap.close()
 
             return ApplyResult(status="applied")
 
         except Exception as e:
+            try:
+                ap.close()
+            except Exception:
+                pass
             return ApplyResult(status="failed", error=str(e))

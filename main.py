@@ -11,7 +11,7 @@ from db.models import JobApplication, RunLog
 from browser.browser import create_browser, create_page
 from scrapers.cakeresume import CakeResumeScraper
 from scrapers.job104 import Job104Scraper
-from mailer.reporter import build_report, build_subject, send_report, send_alert
+from mailer.reporter import build_report, build_subject, send_report
 
 SCRAPER_MAP = {
     "cakeresume": CakeResumeScraper,
@@ -61,7 +61,7 @@ def main() -> None:
     resume_text = extract_text(resume_path)
 
     started_at = datetime.datetime.now()
-    total_applied = total_failed = total_skipped = 0
+    total_applied = total_failed = total_skipped = total_dupes = 0
     failed_urls: list[tuple[str, str]] = []
     screening_urls: list[str] = []
 
@@ -84,7 +84,7 @@ def main() -> None:
                     links = links[:max_links]
                 for url in links:
                     if session.query(JobApplication).filter_by(url=url).first():
-                        total_skipped += 1
+                        total_dupes += 1
                         continue
 
                     print(f"  [{site_name}] applying: {url}")
@@ -110,15 +110,7 @@ def main() -> None:
                     else:
                         total_skipped += 1
 
-                    if result.screening_links:
-                        screening_urls.extend(result.screening_links)
-                        for screening_url in result.screening_links:
-                            send_alert(
-                                url=screening_url,
-                                from_email=secrets["report_email"],
-                                to_email=config["report_email"],
-                                password=secrets["email_password"],
-                            )
+                    screening_urls.extend(result.screening_links)
             finally:
                 browser.close()
 
@@ -144,6 +136,7 @@ def main() -> None:
         total_applied=total_applied,
         total_failed=total_failed,
         total_skipped=total_skipped,
+        total_dupes=total_dupes,
         failed_urls=failed_urls,
         screening_urls=screening_urls,
     )

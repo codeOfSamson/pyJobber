@@ -12,7 +12,7 @@ USER_AGENTS = [
 
 def create_browser(playwright) -> Browser:
     production = os.environ.get("ENV") == "production"
-    args = ["--no-sandbox", "--disable-dev-shm-usage"] if production else []
+    args = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"] if production else []
     return playwright.chromium.launch(headless=production, args=args)
 
 
@@ -21,7 +21,9 @@ def create_page(browser: Browser) -> Page:
         user_agent=random.choice(USER_AGENTS),
         viewport={"width": 1280, "height": 800},
     )
-    return context.new_page()
+    page = context.new_page()
+    page.set_default_timeout(30000)
+    return page
 
 
 def human_delay(min_s: float = 1.0, max_s: float = 3.0) -> None:
