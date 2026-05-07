@@ -23,7 +23,7 @@ python3 --version                  # confirms Python 3 available
 Then set these shell variables — you'll use them throughout every step:
 
 ```bash
-export AWS_REGION="ap-northeast-1"          # Tokyo — change if preferred
+export AWS_REGION="us-east-1"
 export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export BUCKET_NAME="autojobber-config-${ACCOUNT_ID}"   # globally unique
 export SECRET_NAME="autojobber/production"
@@ -41,6 +41,7 @@ echo "Account: $ACCOUNT_ID  Region: $AWS_REGION"
 **Why:** `browser.py` currently launches Chromium with `headless=False` (for local debugging). Inside a Docker container there's no display — Chromium will crash immediately. We also need `--no-sandbox` because Docker containers typically run as root, which Chromium refuses without it.
 
 **Files:**
+
 - Modify: `browser/browser.py`
 
 - [ ] **Step 1: Update `create_browser` to use headless mode in production**
@@ -85,6 +86,7 @@ grep "headless" browser/browser.py
 ```
 
 Expected output:
+
 ```
     return playwright.chromium.launch(headless=production, args=args)
 ```
@@ -215,6 +217,7 @@ aws s3 ls s3://$BUCKET_NAME/
 ```
 
 Expected:
+
 ```
 YYYY-MM-DD HH:MM:SS   NNNN config.json
 YYYY-MM-DD HH:MM:SS   NNNN resume.pdf
@@ -223,12 +226,14 @@ YYYY-MM-DD HH:MM:SS   NNNN resume.pdf
 - [ ] **Step 6: Test the app can read config from S3**
 
 Temporarily add to your `.env`:
+
 ```
 ENV=production
 CONFIG_BUCKET=autojobber-config-ACCOUNT_ID_HERE
 ```
 
 Then:
+
 ```bash
 python3 -c "
 from config.loader import load_config
@@ -243,6 +248,7 @@ Expected: prints your search terms and sites from the S3 config. If you get `Acc
 - [ ] **Step 7: Revert ENV in .env back to local**
 
 Change `.env` back:
+
 ```
 ENV=local
 ```
@@ -256,6 +262,7 @@ ENV=local
 - [ ] **Step 1: Build the secret JSON from your .env values**
 
 Create a file `secret.json` (do NOT commit this):
+
 ```json
 {
   "cakeresume_email": "YOUR_CAKERESUME_EMAIL",
@@ -301,6 +308,7 @@ Expected: your JSON printed formatted. Confirm the keys are all there.
 - [ ] **Step 4: Test the app can fetch secrets**
 
 Add to `.env`:
+
 ```
 ENV=production
 SECRET_NAME=autojobber/production
@@ -308,6 +316,7 @@ CONFIG_BUCKET=autojobber-config-ACCOUNT_ID_HERE
 ```
 
 Then:
+
 ```bash
 python3 -c "
 from secrets.loader import load_secrets
@@ -338,14 +347,16 @@ ENV=local
 ## Task 5: IAM — Task Role and Execution Role
 
 **Why:** ECS needs two IAM roles:
-- **Task Role** — what the *app code* is allowed to do (read S3, read Secrets Manager)
-- **Task Execution Role** — what *ECS itself* is allowed to do (pull the Docker image from ECR, write logs to CloudWatch)
+
+- **Task Role** — what the _app code_ is allowed to do (read S3, read Secrets Manager)
+- **Task Execution Role** — what _ECS itself_ is allowed to do (pull the Docker image from ECR, write logs to CloudWatch)
 
 These are separate because the app code shouldn't need ECR/CloudWatch permissions, and ECS infrastructure shouldn't need your app's S3/secrets.
 
 - [ ] **Step 1: Create the trust policy file for ECS tasks**
 
 Create `ecs-trust-policy.json`:
+
 ```json
 {
   "Version": "2012-10-17",
@@ -376,6 +387,7 @@ Expected: JSON with `"RoleName": "autojobber-task-role"` and an ARN. Note the AR
 - [ ] **Step 3: Create the app permissions policy file**
 
 Create `task-policy.json` (replace REGION and ACCOUNT_ID):
+
 ```json
 {
   "Version": "2012-10-17",
@@ -479,6 +491,7 @@ echo "RDS Security Group: $RDS_SG_ID"
 - [ ] **Step 3: Allow inbound MySQL from your local IP (temporary)**
 
 Replace `YOUR_PUBLIC_IP` with the IP from Step 1:
+
 ```bash
 aws ec2 authorize-security-group-ingress \
   --group-id $RDS_SG_ID \
@@ -572,6 +585,7 @@ rm /tmp/secret_update.json
 - [ ] **Step 8: Test the connection and initialize the schema**
 
 Add to `.env`:
+
 ```
 ENV=production
 SECRET_NAME=autojobber/production
@@ -597,6 +611,7 @@ print(f'job_applications rows: {count}')
 ```
 
 Expected:
+
 ```
 Connecting to: autojobber.xxxxx.ap-northeast-1.rds.amazonaws.com
 Schema initialized successfully
@@ -712,9 +727,9 @@ Create `task-def.json` (replace all CAPS placeholders):
       "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/autojobber:latest",
       "essential": true,
       "environment": [
-        {"name": "ENV", "value": "production"},
-        {"name": "SECRET_NAME", "value": "autojobber/production"},
-        {"name": "CONFIG_BUCKET", "value": "BUCKET_NAME"}
+        { "name": "ENV", "value": "production" },
+        { "name": "SECRET_NAME", "value": "autojobber/production" },
+        { "name": "CONFIG_BUCKET", "value": "BUCKET_NAME" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -730,6 +745,7 @@ Create `task-def.json` (replace all CAPS placeholders):
 ```
 
 You can generate this with your shell variables:
+
 ```bash
 cat > task-def.json << EOF
 {
@@ -811,6 +827,7 @@ aws logs tail /ecs/autojobber --follow --region $AWS_REGION
 You should see the bot starting up, logging in, searching for jobs. Press Ctrl+C to stop tailing.
 
 If the task fails immediately, check the task status for the stop reason:
+
 ```bash
 aws ecs describe-tasks \
   --cluster $CLUSTER_NAME \
@@ -951,6 +968,7 @@ aws scheduler create-schedule \
 ```
 
 Then watch logs:
+
 ```bash
 aws logs tail /ecs/autojobber --follow --region $AWS_REGION
 ```
@@ -989,11 +1007,11 @@ After all tasks complete, confirm:
 
 ## Troubleshooting Reference
 
-| Symptom | Likely cause | Fix |
-|---|---|---|
-| Task stops immediately, `CannotPullContainerError` | ECR auth / no public IP | Check `assignPublicIp=ENABLED`, re-run ECR login |
-| `AccessDenied` on S3 | Task role missing S3 policy | Re-check Task 5 Step 4 |
-| `AccessDenied` on Secrets Manager | Task role missing SM policy | Re-check Task 5 Step 4 |
-| `Can't connect to MySQL` | RDS security group | Check ECS SG is allowed inbound on RDS SG |
-| Container exits with `playwright._impl._errors.Error` | Missing `--no-sandbox` | Verify Task 1 code change is in the pushed image |
-| No logs in CloudWatch | Execution role missing policy | Re-check Task 5 Step 6 |
+| Symptom                                               | Likely cause                  | Fix                                              |
+| ----------------------------------------------------- | ----------------------------- | ------------------------------------------------ |
+| Task stops immediately, `CannotPullContainerError`    | ECR auth / no public IP       | Check `assignPublicIp=ENABLED`, re-run ECR login |
+| `AccessDenied` on S3                                  | Task role missing S3 policy   | Re-check Task 5 Step 4                           |
+| `AccessDenied` on Secrets Manager                     | Task role missing SM policy   | Re-check Task 5 Step 4                           |
+| `Can't connect to MySQL`                              | RDS security group            | Check ECS SG is allowed inbound on RDS SG        |
+| Container exits with `playwright._impl._errors.Error` | Missing `--no-sandbox`        | Verify Task 1 code change is in the pushed image |
+| No logs in CloudWatch                                 | Execution role missing policy | Re-check Task 5 Step 6                           |
