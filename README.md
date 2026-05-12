@@ -63,7 +63,7 @@ Infrastructure lives in `deploy/`. Run scripts in this order on first setup:
 ```bash
 export AWS_PROFILE=<your-profile>
 bash deploy/iam_setup.sh
-bash deploy/s3_setup.sh        # uploads config.json and resume.pdf
+bash deploy/s3_setup.sh        
 bash deploy/rds_setup.sh
 bash deploy/ecs_setup.sh
 bash deploy/eventbridge_setup.sh
