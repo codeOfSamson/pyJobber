@@ -91,7 +91,7 @@ class CakeResumeScraper(BaseScraper):
             # Step 2: Personal info page — just click Next (info is cached)
             ap.get_by_role("button", name="Next").first.click()
             ap.wait_for_load_state("domcontentloaded")
-            human_delay(1.0, 2.0)
+            human_delay(1.5, 2.5)
 
             # Step 3: Resume template page — click Select Template, pick topmost radio, confirm
             ap.get_by_role("button", name="Select Template").click()
@@ -106,21 +106,21 @@ class CakeResumeScraper(BaseScraper):
             human_delay(0.5, 1.0)
 
             # Step 4: Click Next — may land on Submit or Screening Questions
-            ap.get_by_role("button", name="Next").first.click()
             ap.wait_for_load_state("domcontentloaded")
-            human_delay(1.0, 2.0)
-
             submit_loc = ap.get_by_role("button", name="Submit Application")
+            next_loc = ap.get_by_role("button",  name="Next")
+
+            if next_loc.count():
+                next_loc.click()
+                ap.wait_for_load_state("domcontentloaded")
+                human_delay(1.0, 2.0)
+                submit_loc = ap.get_by_role("button", name="Submit Application")
             if not submit_loc.count():
                 # Screening questions or unknown step — flag for manual review
                 ap.close()
                 return ApplyResult(status="skipped", screening_links=[url])
-
+            
             submit_loc.click()
-            ap.wait_for_load_state("domcontentloaded")
-            human_delay(1.0, 2.0)
-            ap.close()
-
             return ApplyResult(status="applied")
 
         except Exception as e:
