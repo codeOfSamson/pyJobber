@@ -1,8 +1,10 @@
 import datetime
 import os
+import traceback
 import boto3
 from playwright.sync_api import sync_playwright
 from pdfminer.high_level import extract_text
+
 
 from config.loader import load_config
 from secrets.loader import load_secrets
@@ -150,4 +152,22 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        error_body = f"Autojobber crashed with the following error:\n\n{traceback.format_exc()}"
+        print(error_body)
+        try:
+            secrets = load_secrets()
+            config = load_config()
+            send_report(
+                body=error_body,
+                subject=f"Jobber Failed — {datetime.datetime.now().strftime('%Y-%m-%d')}",
+                from_email=secrets["report_email"],
+                to_email=config["report_email"],
+                password=secrets["email_password"],
+            )
+        except Exception:
+            print("failed to send crash email")
+        raise
+
