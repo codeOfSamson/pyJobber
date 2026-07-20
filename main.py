@@ -2,7 +2,7 @@ import datetime
 import os
 import traceback
 import boto3
-from playwright.sync_api import sync_playwright
+from patchright.sync_api import sync_playwright
 from pdfminer.high_level import extract_text
 
 
@@ -10,7 +10,7 @@ from config.loader import load_config
 from secrets.loader import load_secrets
 from db.client import get_engine, get_session, init_db
 from db.models import JobApplication, RunLog
-from browser.browser import create_browser, create_page
+from browser.browser import create_browser_context, create_page
 from scrapers.cakeresume import CakeResumeScraper
 from scrapers.job104 import Job104Scraper
 from mailer.reporter import build_report, build_subject, send_report
@@ -74,8 +74,8 @@ def main() -> None:
                 ai_screening=config["ai_screening"],
                 claude_api_key=secrets["claude_api_key"],
             )
-            browser = create_browser(playwright)
-            page = create_page(browser)
+            context = create_browser_context(playwright)
+            page = create_page(context)
             try:
                 scraper.login(page)
                 links = scraper.collect_links(
@@ -114,7 +114,7 @@ def main() -> None:
 
                     screening_urls.extend(result.screening_links)
             finally:
-                browser.close()
+                context.close()
 
     completed_at = datetime.datetime.now()
     session.add(RunLog(

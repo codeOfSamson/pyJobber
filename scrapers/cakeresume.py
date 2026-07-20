@@ -1,6 +1,6 @@
 import re
-from playwright.sync_api import Page
-from browser.browser import human_delay
+from patchright.sync_api import Page
+from browser.browser import human_delay, bypass_cloudflare_challenge
 from scrapers.base import BaseScraper, ApplyResult
 from ai.screening import answer_screening_questions
 
@@ -33,6 +33,7 @@ class CakeResumeScraper(BaseScraper):
             url = url_template.format(term=search_term.replace(" ", "+"), page=p)
             page.goto(url)
             page.wait_for_load_state("domcontentloaded")
+            bypass_cloudflare_challenge(page)
             human_delay(1.0, 2.5)
             anchors = page.query_selector_all('a[href*="/companies/"][href*="/jobs/"]')
             for a in anchors:
@@ -51,6 +52,7 @@ class CakeResumeScraper(BaseScraper):
         try:
             page.goto(url)
             page.wait_for_load_state("domcontentloaded")
+            bypass_cloudflare_challenge(page)
             human_delay(1.0, 2.0)
             print(f"[cake] job page — url={page.url!r} title={page.title()!r}")
 

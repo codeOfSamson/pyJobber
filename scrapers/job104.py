@@ -3,8 +3,8 @@ import os
 import re
 import urllib.parse
 import boto3
-from playwright.sync_api import Page
-from browser.browser import human_delay
+from patchright.sync_api import Page
+from browser.browser import human_delay, bypass_cloudflare_challenge
 from scrapers.base import BaseScraper, ApplyResult
 from ai.screening import answer_screening_questions
 
@@ -56,12 +56,14 @@ class Job104Scraper(BaseScraper):
                 state = json.load(f)
             page.context.add_cookies(state.get("cookies", []))
             page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=20000)
+            bypass_cloudflare_challenge(page)
             if page.get_by_text("登入/註冊").count() == 0:
                 print("[104] session loaded from auth file — skipping login")
                 return
             print("[104] saved session expired — doing full login")
 
         page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=20000)
+        bypass_cloudflare_challenge(page)
         try:
             page.locator(".popup-icon-click > .jb_icon_delete").click(timeout=5000)
         except Exception:
@@ -95,6 +97,7 @@ class Job104Scraper(BaseScraper):
             url = url_template.format(term=encoded, page=p)
             page.goto(url)
             page.wait_for_load_state("domcontentloaded")
+            bypass_cloudflare_challenge(page)
             human_delay(1.5, 3.0)
             anchors = page.query_selector_all('a[href*="/job/"]')
             for a in anchors:
@@ -111,6 +114,7 @@ class Job104Scraper(BaseScraper):
         try:
             page.goto(url)
             page.wait_for_load_state("domcontentloaded")
+            bypass_cloudflare_challenge(page)
             human_delay(1.0, 2.0)
             print(f"[104] job page — url={page.url!r} title={page.title()!r}")
 
