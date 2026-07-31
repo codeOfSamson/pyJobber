@@ -21,6 +21,7 @@ def _page():
 
 def test_login_navigates_to_104(monkeypatch):
     monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
+    monkeypatch.setattr("os.path.exists", lambda path: False)
     scraper = _scraper()
     page = _page()
     scraper.login(page)
@@ -30,10 +31,13 @@ def test_login_navigates_to_104(monkeypatch):
 
 def test_login_fills_credentials(monkeypatch):
     monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
+    monkeypatch.setattr("os.path.exists", lambda path: False)
     scraper = _scraper()
     page = _page()
     scraper.login(page)
-    page.fill.assert_called()
+    filled_values = [c.args[0] for c in page.get_by_placeholder.return_value.fill.call_args_list]
+    assert "a@b.com" in filled_values
+    assert "pass" in filled_values
 
 
 def test_collect_links_returns_href_list(monkeypatch):
@@ -65,7 +69,8 @@ def test_apply_returns_skipped_when_no_apply_button(monkeypatch):
     monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
     scraper = _scraper()
     page = _page()
-    page.query_selector.return_value = None
+    page.get_by_text.return_value.first.count.return_value = 0
+    page.locator.return_value.first.count.return_value = 0
 
     result = scraper.apply(page, "https://www.104.com.tw/job/abc", "resume.pdf", "resume text")
     assert result.status == "skipped"

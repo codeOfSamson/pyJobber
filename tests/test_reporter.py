@@ -13,6 +13,7 @@ def test_build_report_basic():
         total_applied=12,
         total_failed=0,
         total_skipped=8,
+        total_dupes=0,
         failed_urls=[],
         screening_urls=[],
     )
@@ -35,6 +36,7 @@ def test_build_report_includes_failures():
         total_applied=5,
         total_failed=2,
         total_skipped=1,
+        total_dupes=0,
         failed_urls=[
             ("https://cakeresume.com/jobs/xyz", "TimeoutError"),
             ("https://cakeresume.com/jobs/abc", "Login expired"),
@@ -57,6 +59,7 @@ def test_build_report_includes_screening_urls():
         total_applied=3,
         total_failed=0,
         total_skipped=2,
+        total_dupes=0,
         failed_urls=[],
         screening_urls=["https://www.104.com.tw/job/def"],
     )

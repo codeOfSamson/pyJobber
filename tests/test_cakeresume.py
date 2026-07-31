@@ -76,17 +76,11 @@ def test_apply_returns_skipped_with_screening_link_when_ai_off(monkeypatch):
     monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
     scraper = _scraper(ai_screening=False)
     page = _page()
-    apply_btn = MagicMock()
-    question_el = MagicMock()
-    question_el.get_attribute.return_value = "How many years of experience?"
+    page.get_by_text.return_value.count.return_value = 0  # not "ineligible to apply"
 
-    def query_selector_side_effect(sel):
-        if "apply" in sel.lower() or "Apply" in sel:
-            return apply_btn
-        return None
-
-    page.query_selector.side_effect = query_selector_side_effect
-    page.query_selector_all.return_value = [question_el]
+    ap = page.context.new_page.return_value
+    ap.url = "https://www.cake.me/companies/acme/jobs/xyz/apply"
+    ap.get_by_role.return_value.count.return_value = 0  # no Next/Submit button — unknown step
 
     result = scraper.apply(page, "https://www.cakeresume.com/jobs/xyz", "resume.pdf", "resume text")
     assert result.status == "skipped"
