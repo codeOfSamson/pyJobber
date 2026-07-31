@@ -1,0 +1,20 @@
+name: Smoke Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Run smoke test
+        env:
+          SUBNET_ID: ${{ secrets.AWS_SUBNET_ID }}
+          ECS_SG_ID: ${{ secrets.AWS_ECS_SG_ID }}
+        run: ./deploy/smoke_test.sh

@@ -51,6 +51,7 @@ def _get_resume_path() -> str:
 def main() -> None:
     config = load_config()
     secrets = load_secrets()
+    smoke_test = os.environ.get("SMOKE_TEST") == "1"
 
     engine = get_engine(build_db_url(secrets))
     init_db(engine)
@@ -81,6 +82,9 @@ def main() -> None:
                 links = scraper.collect_links(
                     page, search_term, config["pages_per_site"], config["remote_only"]
                 )
+                if smoke_test:
+                    print(f"[smoke-test] {site_name}: login OK, found {len(links)} links")
+                    continue
                 max_links = config.get("max_links_per_site")
                 if max_links:
                     links = links[:max_links]
@@ -115,6 +119,10 @@ def main() -> None:
                     screening_urls.extend(result.screening_links)
             finally:
                 context.close()
+
+    if smoke_test:
+        print("[smoke-test] passed")
+        return
 
     completed_at = datetime.datetime.now()
     session.add(RunLog(
