@@ -90,25 +90,38 @@ class CakeResumeScraper(BaseScraper):
                 ap.close()
                 return ApplyResult(status="skipped", error=f"external ATS: {ap.url}")
 
-            # Step 2: Personal info page — just click Next (info is cached)
-            ap.get_by_role("button", name="Next").first.click()
-            ap.wait_for_load_state("domcontentloaded")
-            human_delay(1.5, 2.5)
+            # Step 2: Personal info page(s) — click Next until we reach the
+            # resume-template step or the submit step. Some jobs insert an
+            # extra personal-info page, so this isn't always a single click.
+            for _ in range(5):
+                if ap.get_by_role("button", name="Select Template").count():
+                    break
+                if ap.get_by_role("button", name="Submit Application").count():
+                    break
+                next_btn = ap.get_by_role("button", name="Next")
+                if not next_btn.count():
+                    break
+                next_btn.first.click()
+                ap.wait_for_load_state("domcontentloaded")
+                human_delay(1.0, 2.0)
 
-            # Step 3: Resume template page — click Select Template, pick topmost radio, confirm
-            ap.get_by_role("button", name="Select Template").click()
-            human_delay(0.5, 1.0)
+            # Step 3: Resume template page (optional — some jobs skip
+            # straight to submit) — click Select Template, pick topmost
+            # radio, confirm
+            if ap.get_by_role("button", name="Select Template").count():
+                ap.get_by_role("button", name="Select Template").click()
+                human_delay(0.5, 1.0)
 
-            # Custom radio divs (no <input type="radio">) — wait for modal to render
-            first_radio = ap.wait_for_selector('[class*="radioOuter"]', timeout=5000)
-            first_radio.click()
-            human_delay(0.3, 0.6)
+                # Custom radio divs (no <input type="radio">) — wait for modal to render
+                first_radio = ap.wait_for_selector('[class*="radioOuter"]', timeout=5000)
+                first_radio.click()
+                human_delay(0.3, 0.6)
 
-            ap.get_by_role("button", name="Confirm").click()
-            human_delay(0.5, 1.0)
+                ap.get_by_role("button", name="Confirm").click()
+                human_delay(0.5, 1.0)
+                ap.wait_for_load_state("domcontentloaded")
 
             # Step 4: Click Next — may land on Submit or Screening Questions
-            ap.wait_for_load_state("domcontentloaded")
             submit_loc = ap.get_by_role("button", name="Submit Application")
             next_loc = ap.get_by_role("button",  name="Next")
 
@@ -121,8 +134,14 @@ class CakeResumeScraper(BaseScraper):
                 # Screening questions or unknown step — flag for manual review
                 ap.close()
                 return ApplyResult(status="skipped", screening_links=[url])
-            
+
+            # Step 5: Submit, then verify it actually registered. A rejected
+            # submission (e.g. missing required field) leaves the button in
+            # place instead of raising — only a detached button means the
+            # application actually went through.
             submit_loc.click()
+            submit_loc.wait_for(state="detached", timeout=10000)
+            ap.close()
             return ApplyResult(status="applied")
 
         except Exception as e:
