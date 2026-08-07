@@ -1,5 +1,7 @@
 import json
 import os
+import random
+import urllib.parse
 import boto3
 from patchright.sync_api import Page
 from browser.browser import human_delay
@@ -80,7 +82,33 @@ class LinkedInScraper(BaseScraper):
                 _upload_auth()
 
     def collect_links(self, page: Page, search_term: str, pages: int, remote_only: bool) -> list:
-        return []
+        links: list = []
+        encoded = urllib.parse.quote(search_term)
+        remote_param = "&f_WT=2" if remote_only else ""
+        for p in range(pages):
+            start = p * 25
+            url = (
+                f"https://www.linkedin.com/jobs/search/?keywords={encoded}"
+                f"&f_AL=true{remote_param}&start={start}"
+            )
+            page.goto(url)
+            page.wait_for_load_state("domcontentloaded")
+            human_delay(1.5, 3.0)
+            anchors = page.query_selector_all('a[href*="/jobs/view/"]')
+            for a in anchors:
+                href = a.get_attribute("href")
+                if not href:
+                    continue
+                full = href if href.startswith("http") else f"https://www.linkedin.com{href}"
+                full = full.split("?")[0]
+                if full not in links:
+                    links.append(full)
+        print(f"[linkedin] collected {len(links)} links for {search_term!r}")
+
+        random.shuffle(links)
+        capped = links[:random.randint(MIN_LINKS_PER_RUN, MAX_LINKS_PER_RUN)]
+        print(f"[linkedin] capped to {len(capped)} links for this run")
+        return capped
 
     def apply(self, page: Page, url: str, resume_path: str, resume_text: str) -> ApplyResult:
         return ApplyResult(status="skipped", error="not implemented")

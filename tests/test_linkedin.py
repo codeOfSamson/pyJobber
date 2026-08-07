@@ -53,3 +53,44 @@ def test_login_skips_full_login_when_saved_session_valid(monkeypatch, tmp_path):
     page.context.add_cookies.assert_called_once()
     # Only the saved-session check navigation happened — no credential fill on top of it.
     page.fill.assert_not_called()
+
+
+def test_collect_links_returns_href_list(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper()
+    page = _page()
+    mock_a = MagicMock()
+    mock_a.get_attribute.return_value = "https://www.linkedin.com/jobs/view/111222333"
+    page.query_selector_all.return_value = [mock_a]
+
+    links = scraper.collect_links(page, "python developer", pages=1, remote_only=True)
+    assert isinstance(links, list)
+    assert "https://www.linkedin.com/jobs/view/111222333" in links
+
+
+def test_collect_links_deduplicates(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper()
+    page = _page()
+    mock_a = MagicMock()
+    mock_a.get_attribute.return_value = "https://www.linkedin.com/jobs/view/999?refId=abc"
+    page.query_selector_all.return_value = [mock_a, mock_a]
+
+    links = scraper.collect_links(page, "python", pages=1, remote_only=True)
+    assert links.count("https://www.linkedin.com/jobs/view/999") == 1
+
+
+def test_collect_links_caps_to_15_25_range(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper()
+    page = _page()
+
+    mocks = []
+    for i in range(40):
+        m = MagicMock()
+        m.get_attribute.return_value = f"https://www.linkedin.com/jobs/view/{i}"
+        mocks.append(m)
+    page.query_selector_all.return_value = mocks
+
+    links = scraper.collect_links(page, "python", pages=1, remote_only=True)
+    assert 15 <= len(links) <= 25
