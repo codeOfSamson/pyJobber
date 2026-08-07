@@ -6,6 +6,7 @@ import boto3
 from patchright.sync_api import Page
 from browser.browser import human_delay
 from scrapers.base import BaseScraper, ApplyResult
+from ai.screening import answer_screening_questions
 
 LOGIN_URL = "https://www.linkedin.com/login"
 JOBS_URL = "https://www.linkedin.com/jobs/"
@@ -124,6 +125,46 @@ class LinkedInScraper(BaseScraper):
             easy_apply.click()
             page.wait_for_load_state("domcontentloaded")
             human_delay(1.0, 2.0)
+
+            unrecognized_field_js = """() => {
+                const modal = document.querySelector('.jobs-easy-apply-modal') ||
+                    document.querySelector('[role="dialog"]');
+                if (!modal) return false;
+                return !!modal.querySelector(
+                    'input[type="radio"], select, input[type="file"], [role="radio"], [role="combobox"], [role="listbox"]'
+                );
+            }"""
+            question_texts_js = """() => {
+                const isQuestion = (s) => /\\?\\s*\\**\\s*$/.test(s || '');
+                const fields = Array.from(document.querySelectorAll('input[type="text"], input[type="number"], textarea'));
+                return fields
+                    .map(el => el.getAttribute('aria-label')
+                        || (el.labels && el.labels[0] && el.labels[0].innerText)
+                        || el.getAttribute('placeholder')
+                        || '')
+                    .map(s => s.trim())
+                    .filter(isQuestion);
+            }"""
+
+            for _ in range(MAX_CONTINUE_STEPS):
+                if page.evaluate(unrecognized_field_js):
+                    page.keyboard.press("Escape")
+                    return ApplyResult(status="skipped", screening_links=[url])
+
+                question_texts = page.evaluate(question_texts_js)
+                for question_text in question_texts:
+                    if not self._ai_screening:
+                        return ApplyResult(status="skipped", screening_links=[url])
+                    answer = answer_screening_questions([question_text], resume_text, self._claude_api_key)[0]
+                    page.get_by_role("textbox", name=question_text, exact=True).fill(answer)
+                    human_delay(0.3, 0.8)
+
+                continue_btn = page.get_by_role("button", name="Continue to next step")
+                if not continue_btn.count():
+                    break
+                continue_btn.click()
+                page.wait_for_load_state("domcontentloaded")
+                human_delay(1.0, 2.0)
 
             return ApplyResult(status="applied")
 
