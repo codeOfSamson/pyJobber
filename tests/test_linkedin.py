@@ -118,19 +118,22 @@ def test_apply_answers_text_screening_question_and_continues(monkeypatch):
     page.get_by_role.return_value.count.return_value = 1  # Easy Apply link present
 
     # First loop pass: one text question, no unrecognized fields, Continue button present.
-    # Second pass: no questions, no Continue button — loop exits.
+    # Second pass: no questions, Continue button present (must iterate again).
+    # Third pass: no questions, no Continue button — loop exits.
     page.evaluate.side_effect = [
         False,  # unrecognized-field check, pass 1
         ["How many years of work experience do you have with Python?*"],  # questions, pass 1
         False,  # unrecognized-field check, pass 2
         [],  # questions, pass 2
+        False,  # unrecognized-field check, pass 3
+        [],  # questions, pass 3
     ]
     continue_calls = {"n": 0}
 
     def get_by_role(role, name=None, **kw):
         m = MagicMock()
         if name == "Continue to next step":
-            m.count.return_value = 1 if continue_calls["n"] == 0 else 0
+            m.count.return_value = 1 if continue_calls["n"] < 2 else 0
             m.click.side_effect = lambda: continue_calls.__setitem__("n", continue_calls["n"] + 1)
         elif name == "Easy Apply to this job":
             m.count.return_value = 1
@@ -146,7 +149,7 @@ def test_apply_answers_text_screening_question_and_continues(monkeypatch):
 
     result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
 
-    assert continue_calls["n"] == 1
+    assert continue_calls["n"] == 2
     page.get_by_role.assert_any_call("textbox", name="How many years of work experience do you have with Python?*", exact=True)
 
 
