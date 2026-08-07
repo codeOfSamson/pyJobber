@@ -57,3 +57,18 @@ def test_get_session_returns_usable_session():
     sess = get_session(eng)
     assert sess is not None
     sess.close()
+
+
+def test_job_application_accepts_linkedin_site(session):
+    app = JobApplication(
+        url="https://www.linkedin.com/jobs/view/12345",
+        site="linkedin",
+        search_term="python developer",
+        status="applied",
+        applied_at=datetime.datetime(2026, 8, 7, 9, 0, 0),
+    )
+    session.add(app)
+    session.commit()
+
+    saved = session.query(JobApplication).filter_by(url="https://www.linkedin.com/jobs/view/12345").one()
+    assert saved.site == "linkedin"

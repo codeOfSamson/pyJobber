@@ -12,7 +12,7 @@ class JobApplication(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     url = Column(String(500), nullable=False)
-    site = Column(SAEnum("cakeresume", "104"), nullable=False)
+    site = Column(SAEnum("cakeresume", "104", "linkedin"), nullable=False)
     search_term = Column(String(100))
     status = Column(SAEnum("applied", "failed", "skipped"), nullable=False)
     applied_at = Column(DateTime, default=datetime.datetime.utcnow)
