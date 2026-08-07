@@ -20,7 +20,7 @@ def _page():
 
 
 def test_login_navigates_to_linkedin_when_no_saved_session(monkeypatch):
-    monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
     monkeypatch.setattr("os.path.exists", lambda path: False)
     scraper = _scraper()
     page = _page()
@@ -29,7 +29,7 @@ def test_login_navigates_to_linkedin_when_no_saved_session(monkeypatch):
 
 
 def test_login_fills_credentials_when_no_saved_session(monkeypatch):
-    monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
     monkeypatch.setattr("os.path.exists", lambda path: False)
     scraper = _scraper()
     page = _page()
@@ -39,7 +39,7 @@ def test_login_fills_credentials_when_no_saved_session(monkeypatch):
 
 
 def test_login_skips_full_login_when_saved_session_valid(monkeypatch, tmp_path):
-    monkeypatch.setattr("browser.browser.human_delay", lambda *a, **kw: None)
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
     auth_file = tmp_path / "auth_linkedin.json"
     auth_file.write_text('{"cookies": [{"name": "li_at", "value": "x", "domain": ".linkedin.com", "path": "/"}]}')
     monkeypatch.setattr("scrapers.linkedin._auth_path", lambda: str(auth_file))
