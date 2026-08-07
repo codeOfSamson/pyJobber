@@ -9,6 +9,8 @@ def test_load_secrets_local(tmp_path, monkeypatch):
         "CAKERESUME_PASSWORD=pass1\n"
         "JOB104_EMAIL=job@test.com\n"
         "JOB104_PASSWORD=pass2\n"
+        "LINKEDIN_EMAIL=linkedin@test.com\n"
+        "LINKEDIN_PASSWORD=pass3\n"
         "CLAUDE_API_KEY=sk-ant-test\n"
         "DB_HOST=localhost\n"
         "DB_USER=root\n"
@@ -23,6 +25,8 @@ def test_load_secrets_local(tmp_path, monkeypatch):
     from secrets.loader import load_secrets
     result = load_secrets()
     assert result["cakeresume_email"] == "cake@test.com"
+    assert result["linkedin_email"] == "linkedin@test.com"
+    assert result["linkedin_password"] == "pass3"
     assert result["claude_api_key"] == "sk-ant-test"
     assert result["db_host"] == "localhost"
 
@@ -36,6 +40,8 @@ def test_load_secrets_production(monkeypatch):
         "cakeresume_password": "prodpass",
         "job104_email": "prod@104.com",
         "job104_password": "prodpass2",
+        "linkedin_email": "prod@linkedin.com",
+        "linkedin_password": "prodpass3",
         "claude_api_key": "sk-ant-prod",
         "db_host": "rds.endpoint",
         "db_user": "admin",
@@ -55,4 +61,5 @@ def test_load_secrets_production(monkeypatch):
     from secrets.loader import load_secrets
     result = load_secrets()
     assert result["cakeresume_email"] == "prod@cake.com"
+    assert result["linkedin_email"] == "prod@linkedin.com"
     assert result["db_host"] == "rds.endpoint"
