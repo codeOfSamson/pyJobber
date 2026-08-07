@@ -94,3 +94,14 @@ def test_collect_links_caps_to_15_25_range(monkeypatch):
 
     links = scraper.collect_links(page, "python", pages=1, remote_only=True)
     assert 15 <= len(links) <= 25
+
+
+def test_apply_returns_skipped_when_no_easy_apply_link(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper()
+    page = _page()
+    page.get_by_role.return_value.count.return_value = 0  # no "Easy Apply to this job" link
+
+    result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
+    assert result.status == "skipped"
+    assert "Easy Apply" in result.error

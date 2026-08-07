@@ -111,4 +111,21 @@ class LinkedInScraper(BaseScraper):
         return capped
 
     def apply(self, page: Page, url: str, resume_path: str, resume_text: str) -> ApplyResult:
-        return ApplyResult(status="skipped", error="not implemented")
+        try:
+            page.goto(url)
+            page.wait_for_load_state("domcontentloaded")
+            human_delay(1.0, 2.0)
+            print(f"[linkedin] job page — url={page.url!r} title={page.title()!r}")
+
+            easy_apply = page.get_by_role("link", name="Easy Apply to this job")
+            if not easy_apply.count():
+                return ApplyResult(status="skipped", error="no Easy Apply link — external application")
+
+            easy_apply.click()
+            page.wait_for_load_state("domcontentloaded")
+            human_delay(1.0, 2.0)
+
+            return ApplyResult(status="applied")
+
+        except Exception as e:
+            return ApplyResult(status="failed", error=str(e))
