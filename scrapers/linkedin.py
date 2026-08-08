@@ -150,12 +150,20 @@ class LinkedInScraper(BaseScraper):
             for _ in range(MAX_CONTINUE_STEPS):
                 if page.evaluate(unrecognized_field_js):
                     page.keyboard.press("Escape")
-                    return ApplyResult(status="skipped", screening_links=[url])
+                    return ApplyResult(
+                        status="skipped",
+                        error="unrecognized field type present (radio/dropdown/file upload) — not supported this version",
+                        screening_links=[url],
+                    )
 
                 question_texts = page.evaluate(question_texts_js)
                 for question_text in question_texts:
                     if not self._ai_screening:
-                        return ApplyResult(status="skipped", screening_links=[url])
+                        return ApplyResult(
+                            status="skipped",
+                            error="text screening question found but ai_screening is disabled",
+                            screening_links=[url],
+                        )
                     answer = answer_screening_questions([question_text], resume_text, self._claude_api_key)[0]
                     page.get_by_role("textbox", name=question_text, exact=True).fill(answer)
                     human_delay(0.3, 0.8)
