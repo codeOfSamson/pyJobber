@@ -178,15 +178,19 @@ class LinkedInScraper(BaseScraper):
             submit_btn.click()
             human_delay(1.0, 2.0)
 
+            confirmed = True
+            try:
+                page.get_by_text("Application submitted", exact=False).wait_for(timeout=8000)
+            except Exception:
+                confirmed = False
+
             try:
                 dismiss_btn = page.get_by_role("button", name=re.compile(r"Dismiss|Not now|Done", re.I))
                 dismiss_btn.first.click(timeout=5000)
             except Exception:
                 pass
 
-            try:
-                page.get_by_text("Application submitted", exact=False).wait_for(timeout=8000)
-            except Exception:
+            if not confirmed:
                 return ApplyResult(status="failed", error="submit click did not register — no confirmation text found")
 
             return ApplyResult(status="applied")

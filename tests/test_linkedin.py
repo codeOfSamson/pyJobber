@@ -212,3 +212,38 @@ def test_apply_returns_failed_when_confirmation_text_never_appears(monkeypatch):
 
     result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
     assert result.status == "failed"
+
+
+def test_apply_verifies_confirmation_before_dismissing_modal(monkeypatch):
+    # Regression test: dismissing the confirmation modal must happen AFTER we've
+    # checked for the "Application submitted" text, not before — otherwise the
+    # dismiss click removes the very text we're waiting for, and a successful
+    # application gets reported as failed.
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper(ai_screening=True)
+    page = _page()
+    call_order = []
+
+    def get_by_role(role, name=None, **kw):
+        m = MagicMock()
+        if name == "Easy Apply to this job":
+            m.count.return_value = 1
+        elif name == "Continue to next step":
+            m.count.return_value = 0
+        elif name == "Review your application":
+            m.count.return_value = 0
+        elif name == "Submit application":
+            m.count.return_value = 1
+        else:
+            m.count.return_value = 1
+            m.first.click.side_effect = lambda **kw: call_order.append("dismiss")
+        return m
+
+    page.get_by_role.side_effect = get_by_role
+    page.evaluate.side_effect = [False, []]  # one loop pass: no unrecognized field, no questions
+    page.get_by_text.return_value.wait_for.side_effect = lambda **kw: call_order.append("verify")
+
+    result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
+
+    assert call_order == ["verify", "dismiss"]
+    assert result.status == "applied"
