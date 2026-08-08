@@ -31,6 +31,33 @@ def test_load_secrets_local(tmp_path, monkeypatch):
     assert result["db_host"] == "localhost"
 
 
+def test_load_secrets_local_defaults_linkedin_to_empty_when_absent(tmp_path, monkeypatch):
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "CAKERESUME_EMAIL=cake@test.com\n"
+        "CAKERESUME_PASSWORD=pass1\n"
+        "JOB104_EMAIL=job@test.com\n"
+        "JOB104_PASSWORD=pass2\n"
+        "CLAUDE_API_KEY=sk-ant-test\n"
+        "DB_HOST=localhost\n"
+        "DB_USER=root\n"
+        "DB_PASSWORD=dbpass\n"
+        "DB_NAME=autojobber\n"
+        "REPORT_EMAIL=report@test.com\n"
+        "EMAIL_PASSWORD=emailpass\n"
+    )
+    monkeypatch.setenv("ENV", "local")
+    monkeypatch.setenv("DOTENV_PATH", str(env_file))
+    monkeypatch.delenv("LINKEDIN_EMAIL", raising=False)
+    monkeypatch.delenv("LINKEDIN_PASSWORD", raising=False)
+
+    from secrets.loader import load_secrets
+    result = load_secrets()
+    assert result["linkedin_email"] == ""
+    assert result["linkedin_password"] == ""
+    assert result["cakeresume_email"] == "cake@test.com"
+
+
 def test_load_secrets_production(monkeypatch):
     monkeypatch.setenv("ENV", "production")
     monkeypatch.setenv("SECRET_NAME", "autojobber/prod")
