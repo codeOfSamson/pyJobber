@@ -4,6 +4,7 @@ config.json
 resume.pdf
 auth.json
 auth_104.json
+auth_linkedin.json
 cake_auth.json
 deploy/.deploy_vars
 __pycache__/
