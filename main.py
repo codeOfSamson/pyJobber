@@ -13,11 +13,13 @@ from db.models import JobApplication, RunLog
 from browser.browser import create_browser_context, create_page
 from scrapers.cakeresume import CakeResumeScraper
 from scrapers.job104 import Job104Scraper
+from scrapers.linkedin import LinkedInScraper
 from mailer.reporter import build_report, build_subject, send_report
 
 SCRAPER_MAP = {
     "cakeresume": CakeResumeScraper,
     "104": Job104Scraper,
+    "linkedin": LinkedInScraper,
 }
 
 

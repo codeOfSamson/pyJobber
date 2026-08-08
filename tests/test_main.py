@@ -44,3 +44,9 @@ def test_build_db_url():
         "db_name": "autojobber",
     }
     assert build_db_url(secrets) == "mysql+pymysql://admin:secret@localhost/autojobber"
+
+
+def test_scraper_map_includes_linkedin():
+    from main import SCRAPER_MAP
+    from scrapers.linkedin import LinkedInScraper
+    assert SCRAPER_MAP["linkedin"] is LinkedInScraper
