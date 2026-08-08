@@ -169,3 +169,46 @@ def test_apply_returns_skipped_when_unrecognized_field_present(monkeypatch):
     result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
     assert result.status == "skipped"
     assert "https://www.linkedin.com/jobs/view/123" in result.screening_links
+
+
+def _apply_stub_for_submit_flow(page, submit_count, dismiss_count, confirmation_count):
+    def get_by_role(role, name=None, **kw):
+        m = MagicMock()
+        if name == "Easy Apply to this job":
+            m.count.return_value = 1
+        elif name == "Continue to next step":
+            m.count.return_value = 0
+        elif name == "Review your application":
+            m.count.return_value = 0
+        elif name == "Submit application":
+            m.count.return_value = submit_count()
+        else:
+            m.first.click.return_value = None
+            m.count.return_value = dismiss_count()
+        return m
+
+    page.get_by_role.side_effect = get_by_role
+    page.evaluate.side_effect = [False, []]  # one loop pass: no unrecognized field, no questions
+    page.get_by_text.return_value.wait_for.side_effect = (
+        None if confirmation_count() else Exception("Timeout 8000ms exceeded")
+    )
+
+
+def test_apply_returns_applied_when_confirmation_text_appears(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper(ai_screening=True)
+    page = _page()
+    _apply_stub_for_submit_flow(page, submit_count=lambda: 1, dismiss_count=lambda: 0, confirmation_count=lambda: 1)
+
+    result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
+    assert result.status == "applied"
+
+
+def test_apply_returns_failed_when_confirmation_text_never_appears(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper(ai_screening=True)
+    page = _page()
+    _apply_stub_for_submit_flow(page, submit_count=lambda: 1, dismiss_count=lambda: 0, confirmation_count=lambda: 0)
+
+    result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
+    assert result.status == "failed"

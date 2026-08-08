@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import re
 import urllib.parse
 import boto3
 from patchright.sync_api import Page
@@ -165,6 +166,28 @@ class LinkedInScraper(BaseScraper):
                 continue_btn.click()
                 page.wait_for_load_state("domcontentloaded")
                 human_delay(1.0, 2.0)
+
+            review_btn = page.get_by_role("button", name="Review your application")
+            if review_btn.count():
+                review_btn.click()
+                human_delay(1.0, 2.0)
+
+            submit_btn = page.get_by_role("button", name="Submit application")
+            if not submit_btn.count():
+                return ApplyResult(status="skipped", screening_links=[url])
+            submit_btn.click()
+            human_delay(1.0, 2.0)
+
+            try:
+                dismiss_btn = page.get_by_role("button", name=re.compile(r"Dismiss|Not now|Done", re.I))
+                dismiss_btn.first.click(timeout=5000)
+            except Exception:
+                pass
+
+            try:
+                page.get_by_text("Application submitted", exact=False).wait_for(timeout=8000)
+            except Exception:
+                return ApplyResult(status="failed", error="submit click did not register — no confirmation text found")
 
             return ApplyResult(status="applied")
 
