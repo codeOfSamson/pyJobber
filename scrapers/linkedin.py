@@ -60,21 +60,21 @@ class LinkedInScraper(BaseScraper):
                 state = json.load(f)
             page.context.add_cookies(state.get("cookies", []))
             page.goto(JOBS_URL, wait_until="domcontentloaded", timeout=20000)
-            if page.get_by_role("link", name="Sign in").count() == 0:
+            if "/login" not in page.url and "/authwall" not in page.url:
                 print("[linkedin] session loaded from auth file — skipping login")
                 return
             print("[linkedin] saved session expired — doing full login")
 
         page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=20000)
-        page.wait_for_selector("#username", timeout=10000)
+        page.wait_for_selector('input[type="email"]:visible', timeout=10000)
         human_delay(0.5, 1.0)
-        page.fill("#username", self._email)
-        page.fill("#password", self._password)
+        page.fill('input[type="email"]:visible', self._email)
+        page.fill('input[type="password"]:visible', self._password)
         human_delay(0.3, 0.6)
-        page.click('button[type="submit"]')
+        page.press('input[type="password"]:visible', "Enter")
         page.wait_for_load_state("domcontentloaded")
         human_delay(3.0, 5.0)
-        logged_in = page.get_by_role("link", name="Sign in").count() == 0
+        logged_in = "/login" not in page.url
         print(f"[linkedin] login complete — url={page.url!r} logged_in={logged_in}")
 
         if logged_in:
@@ -127,13 +127,20 @@ class LinkedInScraper(BaseScraper):
             page.wait_for_load_state("domcontentloaded")
             human_delay(1.0, 2.0)
 
-            unrecognized_field_js = """() => {
+            unsupported_field_js = """() => {
                 const modal = document.querySelector('.jobs-easy-apply-modal') ||
                     document.querySelector('[role="dialog"]');
                 if (!modal) return false;
                 return !!modal.querySelector(
-                    'input[type="radio"], select, input[type="file"], [role="radio"], [role="combobox"], [role="listbox"]'
+                    'input[type="radio"], input[type="file"], [role="radio"], [role="combobox"], [role="listbox"]'
                 );
+            }"""
+            unfilled_dropdown_js = """() => {
+                const modal = document.querySelector('.jobs-easy-apply-modal') ||
+                    document.querySelector('[role="dialog"]');
+                if (!modal) return false;
+                const selects = Array.from(modal.querySelectorAll('select'));
+                return selects.some(s => !s.value || s.value === 'Select an option');
             }"""
             question_texts_js = """() => {
                 const isQuestion = (s) => /\\?\\s*\\**\\s*$/.test(s || '');
@@ -148,11 +155,18 @@ class LinkedInScraper(BaseScraper):
             }"""
 
             for _ in range(MAX_CONTINUE_STEPS):
-                if page.evaluate(unrecognized_field_js):
+                if page.evaluate(unsupported_field_js):
                     page.keyboard.press("Escape")
                     return ApplyResult(
                         status="skipped",
-                        error="unrecognized field type present (radio/dropdown/file upload) — not supported this version",
+                        error="unrecognized field type present (radio/file upload/combobox) — not supported this version",
+                        screening_links=[url],
+                    )
+                if page.evaluate(unfilled_dropdown_js):
+                    page.keyboard.press("Escape")
+                    return ApplyResult(
+                        status="skipped",
+                        error="dropdown field requires a manual selection — not prefilled",
                         screening_links=[url],
                     )
 

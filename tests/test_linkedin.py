@@ -16,6 +16,7 @@ def _page():
     page = MagicMock()
     page.query_selector_all.return_value = []
     page.query_selector.return_value = None
+    page.url = "https://www.linkedin.com/feed/"  # post-login URL by default
     return page
 
 
@@ -34,8 +35,9 @@ def test_login_fills_credentials_when_no_saved_session(monkeypatch):
     scraper = _scraper()
     page = _page()
     scraper.login(page)
-    page.fill.assert_any_call("#username", "a@b.com")
-    page.fill.assert_any_call("#password", "pass")
+    page.fill.assert_any_call('input[type="email"]:visible', "a@b.com")
+    page.fill.assert_any_call('input[type="password"]:visible', "pass")
+    page.press.assert_any_call('input[type="password"]:visible', "Enter")
 
 
 def test_login_skips_full_login_when_saved_session_valid(monkeypatch, tmp_path):
@@ -46,13 +48,30 @@ def test_login_skips_full_login_when_saved_session_valid(monkeypatch, tmp_path):
 
     scraper = _scraper()
     page = _page()
-    page.get_by_role.return_value.count.return_value = 0  # no "Sign in" link — logged in
+    page.url = "https://www.linkedin.com/jobs/"  # not redirected to login/authwall — session still valid
 
     scraper.login(page)
 
     page.context.add_cookies.assert_called_once()
     # Only the saved-session check navigation happened — no credential fill on top of it.
     page.fill.assert_not_called()
+
+
+def test_login_does_full_login_when_saved_session_expired(monkeypatch, tmp_path):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    auth_file = tmp_path / "auth_linkedin.json"
+    auth_file.write_text('{"cookies": [{"name": "li_at", "value": "x", "domain": ".linkedin.com", "path": "/"}]}')
+    monkeypatch.setattr("scrapers.linkedin._auth_path", lambda: str(auth_file))
+
+    scraper = _scraper()
+    page = _page()
+    # Loading JOBS_URL with the stale cookie bounces to the login page — session expired.
+    page.url = "https://www.linkedin.com/login"
+
+    scraper.login(page)
+
+    page.fill.assert_any_call('input[type="email"]:visible', "a@b.com")
+    page.fill.assert_any_call('input[type="password"]:visible', "pass")
 
 
 def test_collect_links_returns_href_list(monkeypatch):
@@ -117,15 +136,18 @@ def test_apply_answers_text_screening_question_and_continues(monkeypatch):
     page = _page()
     page.get_by_role.return_value.count.return_value = 1  # Easy Apply link present
 
-    # First loop pass: one text question, no unrecognized fields, Continue button present.
+    # First loop pass: one text question, no unsupported fields, no unfilled dropdowns, Continue button present.
     # Second pass: no questions, Continue button present (must iterate again).
     # Third pass: no questions, no Continue button — loop exits.
     page.evaluate.side_effect = [
-        False,  # unrecognized-field check, pass 1
+        False,  # unsupported-field check, pass 1
+        False,  # unfilled-dropdown check, pass 1
         ["How many years of work experience do you have with Python?*"],  # questions, pass 1
-        False,  # unrecognized-field check, pass 2
+        False,  # unsupported-field check, pass 2
+        False,  # unfilled-dropdown check, pass 2
         [],  # questions, pass 2
-        False,  # unrecognized-field check, pass 3
+        False,  # unsupported-field check, pass 3
+        False,  # unfilled-dropdown check, pass 3
         [],  # questions, pass 3
     ]
     continue_calls = {"n": 0}
@@ -164,10 +186,29 @@ def test_apply_returns_skipped_when_unrecognized_field_present(monkeypatch):
         return m
 
     page.get_by_role.side_effect = get_by_role
-    page.evaluate.return_value = True  # unrecognized field (e.g. a dropdown) present
+    page.evaluate.return_value = True  # unsupported field (e.g. radio/file/combobox) present
 
     result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
     assert result.status == "skipped"
+    assert "https://www.linkedin.com/jobs/view/123" in result.screening_links
+
+
+def test_apply_returns_skipped_when_dropdown_not_prefilled(monkeypatch):
+    monkeypatch.setattr("scrapers.linkedin.human_delay", lambda *a, **kw: None)
+    scraper = _scraper(ai_screening=True)
+    page = _page()
+
+    def get_by_role(role, name=None, **kw):
+        m = MagicMock()
+        m.count.return_value = 1 if name == "Easy Apply to this job" else 0
+        return m
+
+    page.get_by_role.side_effect = get_by_role
+    page.evaluate.side_effect = [False, True]  # no unsupported field, but a dropdown is still on its placeholder
+
+    result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")
+    assert result.status == "skipped"
+    assert "dropdown" in result.error
     assert "https://www.linkedin.com/jobs/view/123" in result.screening_links
 
 
@@ -188,7 +229,7 @@ def _apply_stub_for_submit_flow(page, submit_count, dismiss_count, confirmation_
         return m
 
     page.get_by_role.side_effect = get_by_role
-    page.evaluate.side_effect = [False, []]  # one loop pass: no unrecognized field, no questions
+    page.evaluate.side_effect = [False, False, []]  # one loop pass: no unsupported field, no unfilled dropdown, no questions
     page.get_by_text.return_value.wait_for.side_effect = (
         None if confirmation_count() else Exception("Timeout 8000ms exceeded")
     )
@@ -240,7 +281,7 @@ def test_apply_verifies_confirmation_before_dismissing_modal(monkeypatch):
         return m
 
     page.get_by_role.side_effect = get_by_role
-    page.evaluate.side_effect = [False, []]  # one loop pass: no unrecognized field, no questions
+    page.evaluate.side_effect = [False, False, []]  # one loop pass: no unsupported field, no unfilled dropdown, no questions
     page.get_by_text.return_value.wait_for.side_effect = lambda **kw: call_order.append("verify")
 
     result = scraper.apply(page, "https://www.linkedin.com/jobs/view/123", "resume.pdf", "resume text")

@@ -2,7 +2,7 @@ import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
 
-SITE_DISPLAY = {"cakeresume": "CakeResume", "104": "104.com.tw"}
+SITE_DISPLAY = {"cakeresume": "CakeResume", "104": "104.com.tw", "linkedin": "LinkedIn"}
 
 
 def build_report(

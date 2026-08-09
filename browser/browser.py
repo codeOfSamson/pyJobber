@@ -11,7 +11,7 @@ USER_AGENTS = [
 ]
 
 
-def create_browser_context(playwright) -> BrowserContext:
+def create_browser_context(playwright, locale: str = None) -> BrowserContext:
     production = os.environ.get("ENV") == "production"
     args = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"] if production else []
     return playwright.chromium.launch_persistent_context(
@@ -20,6 +20,7 @@ def create_browser_context(playwright) -> BrowserContext:
         args=args,
         user_agent=random.choice(USER_AGENTS),
         viewport={"width": 1280, "height": 800},
+        locale=locale,
     )
 
 
