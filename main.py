@@ -1,5 +1,6 @@
 import datetime
 import os
+import sys
 import traceback
 import boto3
 from patchright.sync_api import sync_playwright
@@ -69,6 +70,8 @@ def main() -> None:
     total_applied = total_failed = total_skipped = total_dupes = 0
     failed_urls: list[tuple[str, str]] = []
     screening_urls: list[str] = []
+    linkedin_urls: list[tuple[str, str]] = []
+    site_errors: dict[str, str] = {}
 
     with sync_playwright() as playwright:
         for site_name in config["sites"]:
@@ -118,11 +121,21 @@ def main() -> None:
                     else:
                         total_skipped += 1
 
+                    if site_name == "linkedin":
+                        status_label = result.status + (f" — {result.error}" if result.error else "")
+                        linkedin_urls.append((url, status_label))
+
                     screening_urls.extend(result.screening_links)
+            except Exception:
+                site_errors[site_name] = traceback.format_exc()
+                print(f"[{site_name}] site failed — skipping remaining steps for this site:\n{site_errors[site_name]}")
             finally:
                 context.close()
 
     if smoke_test:
+        if site_errors:
+            print(f"[smoke-test] FAILED — site(s) errored: {', '.join(site_errors)}")
+            sys.exit(1)
         print("[smoke-test] passed")
         return
 
@@ -151,6 +164,7 @@ def main() -> None:
         total_dupes=total_dupes,
         failed_urls=failed_urls,
         screening_urls=screening_urls,
+        linkedin_urls=linkedin_urls,
     )
     send_report(
         body=body,

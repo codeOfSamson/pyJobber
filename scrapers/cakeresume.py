@@ -31,7 +31,11 @@ class CakeResumeScraper(BaseScraper):
         url_template = SEARCH_URL if remote_only else SEARCH_URL_NO_REMOTE
         for p in range(1, pages + 1):
             url = url_template.format(term=search_term.replace(" ", "+"), page=p)
-            page.goto(url)
+            try:
+                page.goto(url)
+            except Exception as e:
+                print(f"[cake] page {p} goto failed — requested={url!r} landed_on={page.url!r} error={e}")
+                continue
             page.wait_for_load_state("domcontentloaded")
             bypass_cloudflare_challenge(page)
             human_delay(1.0, 2.5)

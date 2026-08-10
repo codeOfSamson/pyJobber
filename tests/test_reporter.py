@@ -67,6 +67,29 @@ def test_build_report_includes_screening_urls():
     assert "https://www.104.com.tw/job/def" in body
 
 
+def test_build_report_includes_linkedin_urls():
+    body = build_report(
+        search_term="engineer",
+        sites=["linkedin"],
+        pages_per_site=1,
+        started_at=datetime.datetime(2026, 4, 22, 9, 0, 0),
+        completed_at=datetime.datetime(2026, 4, 22, 9, 2, 0),
+        total_applied=1,
+        total_failed=0,
+        total_skipped=1,
+        total_dupes=0,
+        failed_urls=[],
+        screening_urls=[],
+        linkedin_urls=[
+            ("https://www.linkedin.com/jobs/view/111", "applied"),
+            ("https://www.linkedin.com/jobs/view/222", "skipped — no Easy Apply link — external application"),
+        ],
+    )
+    assert "LinkedIn Jobs Attempted" in body
+    assert "[applied] https://www.linkedin.com/jobs/view/111" in body
+    assert "[skipped — no Easy Apply link — external application] https://www.linkedin.com/jobs/view/222" in body
+
+
 def test_build_subject():
     subject = build_subject("2026-04-22", ["cakeresume", "104"], "backend developer")
     assert "2026-04-22" in subject

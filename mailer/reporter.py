@@ -1,6 +1,7 @@
 import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
+from typing import Optional
 
 SITE_DISPLAY = {"cakeresume": "CakeResume", "104": "104.com.tw", "linkedin": "LinkedIn"}
 
@@ -17,6 +18,7 @@ def build_report(
     total_dupes: int,
     failed_urls: list[tuple[str, str]],
     screening_urls: list[str],
+    linkedin_urls: Optional[list[tuple[str, str]]] = None,
 ) -> str:
     sites_str = ", ".join(SITE_DISPLAY.get(s, s) for s in sites)
     lines = [
@@ -43,6 +45,10 @@ def build_report(
         lines += ["", "Screening Questions (manual review needed)", "─" * 35]
         for i, url in enumerate(screening_urls, 1):
             lines.append(f"{i}. {url}")
+    if linkedin_urls:
+        lines += ["", "LinkedIn Jobs Attempted", "─" * 35]
+        for i, (url, status) in enumerate(linkedin_urls, 1):
+            lines.append(f"{i}. [{status}] {url}")
     return "\n".join(lines)
 
 

@@ -68,6 +68,11 @@ class Job104Scraper(BaseScraper):
             page.locator(".popup-icon-click > .jb_icon_delete").click(timeout=5000)
         except Exception:
             pass
+        try:
+            page.locator("#optimize-covid-banner-close-btn").click(timeout=5000)
+        except Exception:
+            pass
+        print(f"[104] login page state before click — title={page.title()!r} url={page.url!r}")
         page.get_by_text("登入/註冊").click()
         page.wait_for_selector('[placeholder="Enter ID or Email"]', timeout=10000)
         human_delay(0.5, 1.0)

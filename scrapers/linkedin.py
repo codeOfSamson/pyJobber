@@ -72,8 +72,12 @@ class LinkedInScraper(BaseScraper):
         page.fill('input[type="password"]:visible', self._password)
         human_delay(0.3, 0.6)
         page.press('input[type="password"]:visible', "Enter")
+        try:
+            page.wait_for_url(lambda url: "/login" not in url, timeout=15000)
+        except Exception:
+            pass
         page.wait_for_load_state("domcontentloaded")
-        human_delay(3.0, 5.0)
+        human_delay(1.0, 2.0)
         logged_in = "/login" not in page.url
         print(f"[linkedin] login complete — url={page.url!r} logged_in={logged_in}")
 
