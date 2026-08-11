@@ -1,9 +1,10 @@
 import datetime
 
 import pytest
+from botocore.exceptions import ClientError
 from fastapi.testclient import TestClient
 
-from api.dependencies import get_db
+from api.dependencies import get_cluster_runner, get_db
 from api.main import app
 from db.models import JobApplication, RunLog
 
@@ -84,3 +85,32 @@ def test_get_stats_returns_run_log_entries(client, session):
     assert len(body) == 2
     assert body[0]["run_date"] == "2026-08-10"
     assert body[1]["total_skipped"] == 6
+
+
+def test_trigger_run_returns_task_arn(client):
+    class FakeClusterRunner:
+        def trigger(self, sites=None, search_term=None):
+            return "arn:aws:ecs:us-east-1:123:task/autojobber/fake123"
+
+    app.dependency_overrides[get_cluster_runner] = lambda: FakeClusterRunner()
+    try:
+        response = client.post("/api/runs", json={})
+        assert response.status_code == 200
+        assert response.json()["task_arn"] == "arn:aws:ecs:us-east-1:123:task/autojobber/fake123"
+    finally:
+        del app.dependency_overrides[get_cluster_runner]
+
+
+def test_trigger_run_returns_502_on_aws_error(client):
+    class FailingClusterRunner:
+        def trigger(self, sites=None, search_term=None):
+            raise ClientError(
+                {"Error": {"Code": "InvalidParameterException", "Message": "bad subnet"}}, "RunTask"
+            )
+
+    app.dependency_overrides[get_cluster_runner] = lambda: FailingClusterRunner()
+    try:
+        response = client.post("/api/runs", json={"sites": ["linkedin"]})
+        assert response.status_code == 502
+    finally:
+        del app.dependency_overrides[get_cluster_runner]

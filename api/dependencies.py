@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from api.cluster_runner import ClusterRunner
 from db.client import get_engine, get_session, init_db
 from main import build_db_url
 from secrets.loader import load_secrets
@@ -11,6 +12,11 @@ def _get_engine():
     engine = get_engine(build_db_url(creds))
     init_db(engine)
     return engine
+
+
+@lru_cache
+def get_cluster_runner() -> ClusterRunner:
+    return ClusterRunner()
 
 
 def get_db():
