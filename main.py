@@ -42,6 +42,20 @@ def _needs_review(result) -> bool:
     return bool(result.screening_links)
 
 
+def _resolve_sites(config: dict) -> list[str]:
+    override = os.environ.get("SITES_OVERRIDE")
+    if override:
+        return [s.strip() for s in override.split(",") if s.strip()]
+    return config["sites"]
+
+
+def _resolve_search_term(config: dict, term_index: int) -> str:
+    override = os.environ.get("SEARCH_TERM_OVERRIDE")
+    if override:
+        return override
+    return config["search_terms"][term_index]
+
+
 def _get_resume_path() -> str:
     if os.environ.get("ENV") == "production":
         local_path = "/tmp/resume.pdf"
@@ -65,7 +79,8 @@ def main() -> None:
     session = get_session(engine)
 
     term_index = get_next_term_index(session, len(config["search_terms"]))
-    search_term = config["search_terms"][term_index]
+    search_term = _resolve_search_term(config, term_index)
+    sites = _resolve_sites(config)
 
     resume_path = _get_resume_path()
     resume_text = extract_text(resume_path)
@@ -78,7 +93,7 @@ def main() -> None:
     site_errors: dict[str, str] = {}
 
     with sync_playwright() as playwright:
-        for site_name in config["sites"]:
+        for site_name in sites:
             scraper = SCRAPER_MAP[site_name](
                 secrets=secrets,
                 ai_screening=config["ai_screening"],
@@ -159,7 +174,7 @@ def main() -> None:
 
     body = build_report(
         search_term=search_term,
-        sites=config["sites"],
+        sites=sites,
         pages_per_site=config["pages_per_site"],
         started_at=started_at,
         completed_at=completed_at,

@@ -64,3 +64,26 @@ def test_needs_review_true_when_screening_links_present():
 def test_needs_review_false_when_no_screening_links():
     result = ApplyResult(status="applied")
     assert _needs_review(result) is False
+
+
+from main import _resolve_sites, _resolve_search_term
+
+
+def test_resolve_sites_uses_override(monkeypatch):
+    monkeypatch.setenv("SITES_OVERRIDE", "cakeresume, linkedin")
+    assert _resolve_sites({"sites": ["104"]}) == ["cakeresume", "linkedin"]
+
+
+def test_resolve_sites_falls_back_to_config(monkeypatch):
+    monkeypatch.delenv("SITES_OVERRIDE", raising=False)
+    assert _resolve_sites({"sites": ["104"]}) == ["104"]
+
+
+def test_resolve_search_term_uses_override(monkeypatch):
+    monkeypatch.setenv("SEARCH_TERM_OVERRIDE", "rust developer")
+    assert _resolve_search_term({"search_terms": ["python"]}, 0) == "rust developer"
+
+
+def test_resolve_search_term_falls_back_to_config(monkeypatch):
+    monkeypatch.delenv("SEARCH_TERM_OVERRIDE", raising=False)
+    assert _resolve_search_term({"search_terms": ["python", "rust"]}, 1) == "rust"
