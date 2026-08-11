@@ -72,3 +72,19 @@ def test_job_application_accepts_linkedin_site(session):
 
     saved = session.query(JobApplication).filter_by(url="https://www.linkedin.com/jobs/view/12345").one()
     assert saved.site == "linkedin"
+
+
+def test_job_application_review_flags_default_false(session):
+    app = JobApplication(
+        url="https://cakeresume.com/jobs/review-test",
+        site="cakeresume",
+        search_term="python developer",
+        status="skipped",
+        applied_at=datetime.datetime(2026, 8, 11, 9, 0, 0),
+    )
+    session.add(app)
+    session.commit()
+
+    saved = session.query(JobApplication).filter_by(url="https://cakeresume.com/jobs/review-test").one()
+    assert saved.needs_review is False
+    assert saved.reviewed is False

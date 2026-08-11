@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Date, Text, Enum as SAEnum
+from sqlalchemy import Column, Integer, String, DateTime, Date, Text, Boolean, Enum as SAEnum
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -19,6 +19,8 @@ class JobApplication(Base):
     error_message = Column(Text)
     job_updated_at = Column(String(100))
     employer_active_at = Column(String(100))
+    needs_review = Column(Boolean, default=False)
+    reviewed = Column(Boolean, default=False)
 
 
 class RunLog(Base):

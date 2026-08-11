@@ -38,6 +38,10 @@ def build_db_url(secrets: dict) -> str:
     )
 
 
+def _needs_review(result) -> bool:
+    return bool(result.screening_links)
+
+
 def _get_resume_path() -> str:
     if os.environ.get("ENV") == "production":
         local_path = "/tmp/resume.pdf"
@@ -110,6 +114,7 @@ def main() -> None:
                         error_message=result.error,
                         job_updated_at=result.job_updated_at,
                         employer_active_at=result.employer_active_at,
+                        needs_review=_needs_review(result),
                     ))
                     session.commit()
 

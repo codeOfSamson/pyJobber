@@ -50,3 +50,17 @@ def test_scraper_map_includes_linkedin():
     from main import SCRAPER_MAP
     from scrapers.linkedin import LinkedInScraper
     assert SCRAPER_MAP["linkedin"] is LinkedInScraper
+
+
+from scrapers.base import ApplyResult
+from main import _needs_review
+
+
+def test_needs_review_true_when_screening_links_present():
+    result = ApplyResult(status="skipped", screening_links=["https://example.com/job/1"])
+    assert _needs_review(result) is True
+
+
+def test_needs_review_false_when_no_screening_links():
+    result = ApplyResult(status="applied")
+    assert _needs_review(result) is False
