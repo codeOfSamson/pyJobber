@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import applications
+from api.routers import applications, stats
 
 app = FastAPI(title="Autojobber Dashboard API")
 
@@ -13,6 +13,7 @@ app.add_middleware(
 )
 
 app.include_router(applications.router)
+app.include_router(stats.router)
 
 
 @app.get("/api/health")

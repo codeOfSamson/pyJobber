@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 from api.dependencies import get_db
 from api.main import app
-from db.models import JobApplication
+from db.models import JobApplication, RunLog
 
 
 @pytest.fixture
@@ -65,3 +65,22 @@ def test_update_application_marks_reviewed(client, session):
 def test_update_application_404_for_missing_id(client):
     response = client.patch("/api/applications/9999", json={"reviewed": True})
     assert response.status_code == 404
+
+
+def test_get_stats_returns_run_log_entries(client, session):
+    session.add(RunLog(
+        run_date=datetime.date(2026, 8, 10), search_term_used="python developer",
+        term_index=0, total_applied=5, total_failed=1, total_skipped=3,
+    ))
+    session.add(RunLog(
+        run_date=datetime.date(2026, 8, 11), search_term_used="backend engineer",
+        term_index=1, total_applied=2, total_failed=0, total_skipped=6,
+    ))
+    session.commit()
+
+    response = client.get("/api/stats")
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 2
+    assert body[0]["run_date"] == "2026-08-10"
+    assert body[1]["total_skipped"] == 6
