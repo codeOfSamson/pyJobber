@@ -90,12 +90,13 @@ class LinkedInScraper(BaseScraper):
     def collect_links(self, page: Page, search_term: str, pages: int, remote_only: bool) -> list:
         links: list = []
         encoded = urllib.parse.quote(search_term)
+        location = urllib.parse.quote("Minnesota")
         remote_param = "&f_WT=2" if remote_only else ""
         for p in range(pages):
             start = p * 25
             url = (
                 f"https://www.linkedin.com/jobs/search/?keywords={encoded}"
-                f"&f_AL=true{remote_param}&start={start}"
+                f"&location={location}&f_AL=true{remote_param}&start={start}"
             )
             page.goto(url)
             page.wait_for_load_state("domcontentloaded")
