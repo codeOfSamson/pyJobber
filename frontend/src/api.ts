@@ -15,3 +15,46 @@ export async function fetchStats(): Promise<RunStat[]> {
   }
   return response.json();
 }
+
+export interface Application {
+  id: number;
+  url: string;
+  site: string;
+  search_term: string | null;
+  status: string;
+  applied_at: string | null;
+  error_message: string | null;
+  needs_review: boolean;
+  reviewed: boolean;
+}
+
+export interface ApplicationFilters {
+  site?: string;
+  status?: string;
+  needs_review?: boolean;
+}
+
+export async function fetchApplications(filters: ApplicationFilters = {}): Promise<Application[]> {
+  const params = new URLSearchParams();
+  if (filters.site) params.set("site", filters.site);
+  if (filters.status) params.set("status", filters.status);
+  if (filters.needs_review !== undefined) params.set("needs_review", String(filters.needs_review));
+
+  const response = await fetch(`${API_BASE_URL}/api/applications?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch applications: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function updateApplicationReviewed(id: number, reviewed: boolean): Promise<Application> {
+  const response = await fetch(`${API_BASE_URL}/api/applications/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reviewed }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to update application: ${response.status}`);
+  }
+  return response.json();
+}
