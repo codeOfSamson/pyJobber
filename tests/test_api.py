@@ -1,7 +1,7 @@
 import datetime
 
 import pytest
-from botocore.exceptions import ClientError
+from botocore.exceptions import BotoCoreError, ClientError
 from fastapi.testclient import TestClient
 
 from api.dependencies import get_cluster_runner, get_db
@@ -114,3 +114,35 @@ def test_trigger_run_returns_502_on_aws_error(client):
         assert response.status_code == 502
     finally:
         del app.dependency_overrides[get_cluster_runner]
+
+
+def test_trigger_run_returns_502_on_botocore_error(client):
+    class FailingClusterRunner:
+        def trigger(self, sites=None, search_term=None):
+            raise BotoCoreError()
+
+    app.dependency_overrides[get_cluster_runner] = lambda: FailingClusterRunner()
+    try:
+        response = client.post("/api/runs", json={"sites": ["linkedin"]})
+        assert response.status_code == 502
+    finally:
+        del app.dependency_overrides[get_cluster_runner]
+
+
+def test_trigger_run_returns_502_on_missing_env_var(client):
+    class FailingClusterRunner:
+        def trigger(self, sites=None, search_term=None):
+            raise KeyError("SUBNET_ID")
+
+    app.dependency_overrides[get_cluster_runner] = lambda: FailingClusterRunner()
+    try:
+        response = client.post("/api/runs", json={"sites": ["linkedin"]})
+        assert response.status_code == 502
+        assert "SUBNET_ID" in response.json()["detail"]
+    finally:
+        del app.dependency_overrides[get_cluster_runner]
+
+
+def test_trigger_run_rejects_unknown_site(client):
+    response = client.post("/api/runs", json={"sites": ["not-a-real-site"]})
+    assert response.status_code == 422

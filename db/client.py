@@ -4,7 +4,7 @@ from db.models import Base
 
 
 def get_engine(db_url: str):
-    return _create_engine(db_url)
+    return _create_engine(db_url, pool_pre_ping=True)
 
 
 def get_session(engine) -> Session:

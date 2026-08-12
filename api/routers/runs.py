@@ -1,4 +1,4 @@
-from botocore.exceptions import ClientError
+from botocore.exceptions import BotoCoreError, ClientError
 from fastapi import APIRouter, Depends, HTTPException
 
 from api.cluster_runner import ClusterRunner
@@ -18,6 +18,8 @@ def trigger_run(
     service = RunService(cluster_runner)
     try:
         task_arn = service.trigger(sites=payload.sites, search_term=payload.search_term)
-    except ClientError as e:
+    except (ClientError, BotoCoreError) as e:
         raise HTTPException(status_code=502, detail=str(e))
+    except KeyError as e:
+        raise HTTPException(status_code=502, detail=f"Missing required environment variable: {e}")
     return RunResponse(task_arn=task_arn)

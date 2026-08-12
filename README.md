@@ -56,6 +56,20 @@ CLAUDE_API_KEY
 REPORT_EMAIL, EMAIL_PASSWORD
 ```
 
+## Database Migration
+
+**Required before deploying this branch.** This project has no migration framework — `init_db()` only calls `create_all()`, which never alters existing tables. The production RDS `job_applications` table was created before the `needs_review`/`reviewed` columns existed, and `main.py`/the API now read and write those columns.
+
+Run this against production **before** deploying an image built from this branch:
+
+```sql
+ALTER TABLE job_applications
+  ADD COLUMN needs_review BOOLEAN DEFAULT FALSE,
+  ADD COLUMN reviewed BOOLEAN DEFAULT FALSE;
+```
+
+If this is skipped, every `session.commit()` in the apply loop will fail with `Unknown column 'needs_review'`, the per-site error handling in `main.py` will silently mark every site as failed, and the run will "succeed" with 0 applications — the report email will misleadingly blame the scrapers rather than the missing column.
+
 ## AWS deployment
 
 Infrastructure lives in `deploy/`. Run scripts in this order on first setup:
