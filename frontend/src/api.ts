@@ -58,3 +58,19 @@ export async function updateApplicationReviewed(id: number, reviewed: boolean): 
   }
   return response.json();
 }
+
+export async function triggerRun(sites: string[], searchTerm: string): Promise<{ task_arn: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/runs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sites: sites.length > 0 ? sites : undefined,
+      search_term: searchTerm || undefined,
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({ detail: response.statusText }));
+    throw new Error(body.detail || `Failed to trigger run: ${response.status}`);
+  }
+  return response.json();
+}
