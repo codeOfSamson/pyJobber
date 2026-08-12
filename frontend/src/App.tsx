@@ -1,6 +1,7 @@
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import original from "react95/dist/themes/original";
-import { Window, WindowHeader, WindowContent, styleReset } from "react95";
+import { styleReset } from "react95";
+import { StatsWindow } from "./windows/StatsWindow";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -10,11 +11,8 @@ function App() {
   return (
     <ThemeProvider theme={original}>
       <GlobalStyles />
-      <div className="min-h-screen bg-teal-700 flex items-center justify-center p-8">
-        <Window>
-          <WindowHeader>Autojobber Dashboard</WindowHeader>
-          <WindowContent>Scaffold OK.</WindowContent>
-        </Window>
+      <div className="min-h-screen bg-teal-700 p-8 flex flex-col gap-6">
+        <StatsWindow />
       </div>
     </ThemeProvider>
   );
