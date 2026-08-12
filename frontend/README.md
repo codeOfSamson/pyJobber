@@ -2,6 +2,10 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
+## Environment setup
+
+Copy `.env.example` to `.env` (`cp .env.example .env`) before running `npm run dev`. `.env` is gitignored — each developer keeps their own local copy.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
