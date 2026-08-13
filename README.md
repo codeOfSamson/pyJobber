@@ -1,5 +1,7 @@
 # AutoJobber
 
+![App screenshot](frontend/public/ui.png)
+
 A job application bot that automatically applies to jobs on CakeResume and 104.com.tw, then emails you a daily summary. Runs on AWS ECS Fargate via a daily EventBridge schedule.
 
 ## How it works
@@ -19,17 +21,20 @@ python3 -m playwright install chromium
 ```
 
 Copy and fill in credentials:
+
 ```bash
 cp .env.example .env
 cp config.example.json config.json
 ```
 
 Save 104.com.tw session (login manually including OTP, then close the browser):
+
 ```bash
 python3 -m playwright codegen --save-storage=auth_104.json https://www.104.com.tw/
 ```
 
 Run locally (opens a visible browser):
+
 ```bash
 set -a; source .env; set +a
 python3 main.py
@@ -48,6 +53,7 @@ python3 main.py
 | `report_email` | Address to receive the daily summary |
 
 `.env` required keys:
+
 ```
 DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 CAKERESUME_EMAIL, CAKERESUME_PASSWORD
@@ -77,29 +83,33 @@ Infrastructure lives in `deploy/`. Run scripts in this order on first setup:
 ```bash
 export AWS_PROFILE=<your-profile>
 bash deploy/iam_setup.sh
-bash deploy/s3_setup.sh        
+bash deploy/s3_setup.sh
 bash deploy/rds_setup.sh
 bash deploy/ecs_setup.sh
 bash deploy/eventbridge_setup.sh
 ```
 
 Upload the 104 auth session:
+
 ```bash
 aws s3 cp auth_104.json s3://<your-config-bucket>/auth_104.json
 ```
 
 Build and push the Docker image:
+
 ```bash
 docker build --platform linux/amd64 -t autojobber .
 bash deploy/ecr_push.sh
 ```
 
 Trigger a manual run:
+
 ```bash
 bash deploy/run_task.sh
 ```
 
 Update your local IP to connect to RDS from TablePlus:
+
 ```bash
 bash deploy/update_rds_ip.sh
 ```
