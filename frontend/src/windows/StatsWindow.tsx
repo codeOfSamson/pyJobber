@@ -36,9 +36,24 @@ export function StatsWindow() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="total_applied" stroke="#2e7d32" name="Applied" />
-                <Line type="monotone" dataKey="total_failed" stroke="#c62828" name="Failed" />
-                <Line type="monotone" dataKey="total_skipped" stroke="#f9a825" name="Skipped" />
+                <Line
+                  type="monotone"
+                  dataKey="total_applied"
+                  stroke="#2e7d32"
+                  name="Applied"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="total_failed"
+                  stroke="#c62828"
+                  name="Failed"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="total_skipped"
+                  stroke="#f9a825"
+                  name="Skipped"
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
